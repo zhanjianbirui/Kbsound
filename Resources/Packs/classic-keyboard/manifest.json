@@ -1,0 +1,254 @@
+{
+  "formatVersion": 1,
+  "id": "com.klinkmac.classic-keyboard",
+  "name": "Classic Keyboard",
+  "author": "Unknown",
+  "version": "1.0.0",
+  "description": "Converted from Mechvibes pack 'Classic Keyboard'.",
+  "license": "unknown",
+  "defaults": {
+    "down": "3.wav"
+  },
+  "keys": {
+    "0": {
+      "down": "11.wav"
+    },
+    "1": {
+      "down": "10.wav"
+    },
+    "2": {
+      "down": "5.wav"
+    },
+    "3": {
+      "down": "5.wav"
+    },
+    "4": {
+      "down": "20.wav"
+    },
+    "5": {
+      "down": "15.wav"
+    },
+    "6": {
+      "down": "2.wav"
+    },
+    "7": {
+      "down": "22.wav"
+    },
+    "8": {
+      "down": "2.wav"
+    },
+    "9": {
+      "down": "17.wav"
+    },
+    "11": {
+      "down": "24.wav"
+    },
+    "12": {
+      "down": "19.wav"
+    },
+    "13": {
+      "down": "13.wav"
+    },
+    "14": {
+      "down": "1.wav"
+    },
+    "15": {
+      "down": "16.wav"
+    },
+    "16": {
+      "down": "8.wav"
+    },
+    "17": {
+      "down": "5.wav"
+    },
+    "19": {
+      "down": "16.wav"
+    },
+    "20": {
+      "down": "11.wav"
+    },
+    "21": {
+      "down": "20.wav"
+    },
+    "22": {
+      "down": "18.wav"
+    },
+    "23": {
+      "down": "19.wav"
+    },
+    "24": {
+      "down": "22.wav"
+    },
+    "25": {
+      "down": "13.wav"
+    },
+    "26": {
+      "down": "12.wav"
+    },
+    "27": {
+      "down": "15.wav"
+    },
+    "28": {
+      "down": "14.wav"
+    },
+    "29": {
+      "down": "17.wav"
+    },
+    "30": {
+      "down": "10.wav"
+    },
+    "31": {
+      "down": "20.wav"
+    },
+    "33": {
+      "down": "14.wav"
+    },
+    "34": {
+      "down": "4.wav"
+    },
+    "35": {
+      "down": "12.wav"
+    },
+    "36": {
+      "down": "enter.wav"
+    },
+    "37": {
+      "down": "23.wav"
+    },
+    "40": {
+      "down": "20.wav"
+    },
+    "41": {
+      "down": "11.wav"
+    },
+    "42": {
+      "down": "20.wav"
+    },
+    "44": {
+      "down": "17.wav"
+    },
+    "45": {
+      "down": "7.wav"
+    },
+    "46": {
+      "down": "11.wav"
+    },
+    "47": {
+      "down": "7.wav"
+    },
+    "48": {
+      "down": "24.wav"
+    },
+    "49": {
+      "down": "space.wav"
+    },
+    "50": {
+      "down": "13.wav"
+    },
+    "51": {
+      "down": "7.wav"
+    },
+    "53": {
+      "down": "15.wav"
+    },
+    "65": {
+      "down": "9.wav"
+    },
+    "67": {
+      "down": "13.wav"
+    },
+    "69": {
+      "down": "1.wav"
+    },
+    "75": {
+      "down": "20.wav"
+    },
+    "78": {
+      "down": "17.wav"
+    },
+    "82": {
+      "down": "1.wav"
+    },
+    "83": {
+      "down": "18.wav"
+    },
+    "84": {
+      "down": "16.wav"
+    },
+    "85": {
+      "down": "19.wav"
+    },
+    "86": {
+      "down": "12.wav"
+    },
+    "87": {
+      "down": "19.wav"
+    },
+    "88": {
+      "down": "4.wav"
+    },
+    "89": {
+      "down": "5.wav"
+    },
+    "91": {
+      "down": "7.wav"
+    },
+    "92": {
+      "down": "23.wav"
+    },
+    "97": {
+      "down": "5.wav"
+    },
+    "98": {
+      "down": "2.wav"
+    },
+    "99": {
+      "down": "19.wav"
+    },
+    "100": {
+      "down": "7.wav"
+    },
+    "101": {
+      "down": "5.wav"
+    },
+    "103": {
+      "down": "20.wav"
+    },
+    "109": {
+      "down": "10.wav"
+    },
+    "111": {
+      "down": "2.wav"
+    },
+    "115": {
+      "down": "20.wav"
+    },
+    "117": {
+      "down": "24.wav"
+    },
+    "118": {
+      "down": "21.wav"
+    },
+    "119": {
+      "down": "15.wav"
+    },
+    "120": {
+      "down": "14.wav"
+    },
+    "122": {
+      "down": "9.wav"
+    },
+    "123": {
+      "down": "24.wav"
+    },
+    "124": {
+      "down": "19.wav"
+    },
+    "125": {
+      "down": "7.wav"
+    },
+    "126": {
+      "down": "17.wav"
+    }
+  }
+}

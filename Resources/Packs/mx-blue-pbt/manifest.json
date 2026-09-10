@@ -1,0 +1,181 @@
+{
+  "formatVersion": 1,
+  "id": "com.klinkmac.mx-blue-pbt",
+  "name": "Cherry MX Blue · PBT",
+  "author": "Mechvibes Community",
+  "version": "1.0.0",
+  "description": "Classic clicky switch on PBT keycaps — sharper tone.",
+  "defaults": {
+    "down": "midpitch.wav"
+  },
+  "keys": {
+    "0": {
+      "down": "lowpitch.wav"
+    },
+    "1": {
+      "down": "lowpitch.wav"
+    },
+    "2": {
+      "down": "highpitch.wav"
+    },
+    "3": {
+      "down": "lowpitch.wav"
+    },
+    "4": {
+      "down": "lowpitch.wav"
+    },
+    "7": {
+      "down": "lowpitch.wav"
+    },
+    "8": {
+      "down": "lowpitch.wav"
+    },
+    "9": {
+      "down": "lowpitch.wav"
+    },
+    "11": {
+      "down": "highpitch.wav"
+    },
+    "12": {
+      "down": "highpitch.wav"
+    },
+    "13": {
+      "down": "lowpitch.wav"
+    },
+    "15": {
+      "down": "lowpitch.wav"
+    },
+    "17": {
+      "down": "lowpitch.wav"
+    },
+    "19": {
+      "down": "lowpitch.wav"
+    },
+    "21": {
+      "down": "highpitch.wav"
+    },
+    "22": {
+      "down": "lowpitch.wav"
+    },
+    "23": {
+      "down": "lowpitch.wav"
+    },
+    "24": {
+      "down": "altpitch.wav"
+    },
+    "25": {
+      "down": "highpitch.wav"
+    },
+    "28": {
+      "down": "lowpitch.wav"
+    },
+    "32": {
+      "down": "highpitch.wav"
+    },
+    "35": {
+      "down": "altpitch.wav"
+    },
+    "36": {
+      "down": "altpitch.wav"
+    },
+    "37": {
+      "down": "altpitch.wav"
+    },
+    "39": {
+      "down": "highpitch.wav"
+    },
+    "42": {
+      "down": "highpitch.wav"
+    },
+    "44": {
+      "down": "altpitch.wav"
+    },
+    "46": {
+      "down": "lowpitch.wav"
+    },
+    "48": {
+      "down": "altpitch.wav"
+    },
+    "49": {
+      "down": "spacebar.wav"
+    },
+    "50": {
+      "down": "altpitch.wav"
+    },
+    "51": {
+      "down": "altpitch.wav"
+    },
+    "53": {
+      "down": "altpitch.wav"
+    },
+    "65": {
+      "down": "lowpitch.wav"
+    },
+    "67": {
+      "down": "highpitch.wav"
+    },
+    "69": {
+      "down": "highpitch.wav"
+    },
+    "71": {
+      "down": "lowpitch.wav"
+    },
+    "82": {
+      "down": "lowpitch.wav"
+    },
+    "83": {
+      "down": "lowpitch.wav"
+    },
+    "85": {
+      "down": "highpitch.wav"
+    },
+    "87": {
+      "down": "lowpitch.wav"
+    },
+    "89": {
+      "down": "lowpitch.wav"
+    },
+    "96": {
+      "down": "lowpitch.wav"
+    },
+    "97": {
+      "down": "lowpitch.wav"
+    },
+    "98": {
+      "down": "highpitch.wav"
+    },
+    "99": {
+      "down": "highpitch.wav"
+    },
+    "100": {
+      "down": "lowpitch.wav"
+    },
+    "101": {
+      "down": "lowpitch.wav"
+    },
+    "109": {
+      "down": "highpitch.wav"
+    },
+    "115": {
+      "down": "lowpitch.wav"
+    },
+    "118": {
+      "down": "altpitch.wav"
+    },
+    "119": {
+      "down": "highpitch.wav"
+    },
+    "120": {
+      "down": "lowpitch.wav"
+    },
+    "122": {
+      "down": "lowpitch.wav"
+    },
+    "123": {
+      "down": "highpitch.wav"
+    },
+    "125": {
+      "down": "lowpitch.wav"
+    }
+  }
+}

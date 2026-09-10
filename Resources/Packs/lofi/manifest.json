@@ -1,0 +1,43 @@
+{
+  "formatVersion": 1,
+  "id": "com.klinkmac.lofi",
+  "name": "Lo-Fi Keys",
+  "author": "Mechvibes Community",
+  "version": "1.0.0",
+  "description": "Warm, muted keystrokes for a relaxed typing feel.",
+  "defaults": {
+    "down": "keyboard1.wav"
+  },
+  "keys": {
+    "36": {
+      "down": "keyboard4.wav"
+    },
+    "49": {
+      "down": "keyboard2.wav"
+    },
+    "53": {
+      "down": "keyboard4.wav"
+    },
+    "71": {
+      "down": "keyboard3.wav"
+    },
+    "115": {
+      "down": "keyboard3.wav"
+    },
+    "119": {
+      "down": "keyboard3.wav"
+    },
+    "123": {
+      "down": "keyboard3.wav"
+    },
+    "124": {
+      "down": "keyboard3.wav"
+    },
+    "125": {
+      "down": "keyboard3.wav"
+    },
+    "126": {
+      "down": "keyboard3.wav"
+    }
+  }
+}

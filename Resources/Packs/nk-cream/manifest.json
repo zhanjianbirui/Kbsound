@@ -1,0 +1,241 @@
+{
+  "formatVersion": 1,
+  "id": "com.klinkmac.nk-cream",
+  "name": "NovelKeys Cream",
+  "author": "Mechvibes Community",
+  "version": "1.0.0",
+  "description": "Full POM linear — deep, smooth, and buttery.",
+  "defaults": {
+    "down": "_.wav"
+  },
+  "keys": {
+    "0": {
+      "down": "a.wav"
+    },
+    "1": {
+      "down": "s.wav"
+    },
+    "2": {
+      "down": "d.wav"
+    },
+    "3": {
+      "down": "f.wav"
+    },
+    "4": {
+      "down": "h.wav"
+    },
+    "5": {
+      "down": "g.wav"
+    },
+    "6": {
+      "down": "z.wav"
+    },
+    "7": {
+      "down": "x.wav"
+    },
+    "8": {
+      "down": "c.wav"
+    },
+    "9": {
+      "down": "v.wav"
+    },
+    "11": {
+      "down": "b.wav"
+    },
+    "12": {
+      "down": "q.wav"
+    },
+    "13": {
+      "down": "w.wav"
+    },
+    "14": {
+      "down": "e.wav"
+    },
+    "15": {
+      "down": "r.wav"
+    },
+    "16": {
+      "down": "y.wav"
+    },
+    "17": {
+      "down": "t.wav"
+    },
+    "18": {
+      "down": "w.wav"
+    },
+    "19": {
+      "down": "e.wav"
+    },
+    "20": {
+      "down": "e.wav"
+    },
+    "21": {
+      "down": "r.wav"
+    },
+    "22": {
+      "down": "y.wav"
+    },
+    "23": {
+      "down": "t.wav"
+    },
+    "25": {
+      "down": "o.wav"
+    },
+    "26": {
+      "down": "u.wav"
+    },
+    "28": {
+      "down": "i.wav"
+    },
+    "29": {
+      "down": "p.wav"
+    },
+    "31": {
+      "down": "o.wav"
+    },
+    "32": {
+      "down": "u.wav"
+    },
+    "34": {
+      "down": "i.wav"
+    },
+    "35": {
+      "down": "p.wav"
+    },
+    "36": {
+      "down": "enter.wav"
+    },
+    "37": {
+      "down": "l.wav"
+    },
+    "38": {
+      "down": "j.wav"
+    },
+    "40": {
+      "down": "k.wav"
+    },
+    "42": {
+      "down": "backspace.wav"
+    },
+    "43": {
+      "down": "l.wav"
+    },
+    "45": {
+      "down": "n.wav"
+    },
+    "46": {
+      "down": "m.wav"
+    },
+    "48": {
+      "down": "tab.wav"
+    },
+    "49": {
+      "down": "space.wav"
+    },
+    "50": {
+      "down": "q.wav"
+    },
+    "51": {
+      "down": "backspace.wav"
+    },
+    "53": {
+      "down": "q.wav"
+    },
+    "67": {
+      "down": "o.wav"
+    },
+    "69": {
+      "down": "enter.wav"
+    },
+    "71": {
+      "down": "u.wav"
+    },
+    "75": {
+      "down": "i.wav"
+    },
+    "78": {
+      "down": "p.wav"
+    },
+    "82": {
+      "down": "shift.wav"
+    },
+    "83": {
+      "down": "b.wav"
+    },
+    "84": {
+      "down": "n.wav"
+    },
+    "85": {
+      "down": "m.wav"
+    },
+    "86": {
+      "down": "h.wav"
+    },
+    "87": {
+      "down": "j.wav"
+    },
+    "88": {
+      "down": "k.wav"
+    },
+    "89": {
+      "down": "y.wav"
+    },
+    "91": {
+      "down": "u.wav"
+    },
+    "92": {
+      "down": "i.wav"
+    },
+    "96": {
+      "down": "t.wav"
+    },
+    "97": {
+      "down": "y.wav"
+    },
+    "98": {
+      "down": "u.wav"
+    },
+    "99": {
+      "down": "e.wav"
+    },
+    "100": {
+      "down": "i.wav"
+    },
+    "101": {
+      "down": "o.wav"
+    },
+    "109": {
+      "down": "p.wav"
+    },
+    "115": {
+      "down": "k.wav"
+    },
+    "117": {
+      "down": "o.wav"
+    },
+    "118": {
+      "down": "r.wav"
+    },
+    "119": {
+      "down": "h.wav"
+    },
+    "120": {
+      "down": "e.wav"
+    },
+    "122": {
+      "down": "w.wav"
+    },
+    "123": {
+      "down": "c.wav"
+    },
+    "124": {
+      "down": "b.wav"
+    },
+    "125": {
+      "down": "v.wav"
+    },
+    "126": {
+      "down": "g.wav"
+    }
+  }
+}
