@@ -1,4 +1,3 @@
-Package.swift
 .build/
 *.app
 .DS_Store
