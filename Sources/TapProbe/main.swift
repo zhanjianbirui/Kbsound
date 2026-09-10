@@ -1,5 +1,9 @@
 import Cocoa
 
+// 输出不接终端时 stdout 默认是块缓冲，敲键的日志会堵在缓冲区里看不见。
+// 这个探针的全部意义就是给人看实时反馈，所以关掉缓冲。
+setbuf(stdout, nil)
+
 guard AXIsProcessTrusted() else {
     print("❌ 无辅助功能权限。请到 系统设置 > 隐私与安全性 > 辅助功能 勾选运行本程序的终端，然后重试。")
     exit(1)
