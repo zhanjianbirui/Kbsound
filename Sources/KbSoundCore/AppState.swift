@@ -119,6 +119,7 @@ public final class AppState {
 
     private func startTap() {
         guard AccessibilityPermission.isTrusted else {
+            Self.logger.info("尚无辅助功能权限，面板显示提示条并开始轮询")
             status = .needsAccessibility
             startPollingForPermission()
             return
