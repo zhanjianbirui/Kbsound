@@ -60,7 +60,8 @@ public struct LoadedPack: @unchecked Sendable {
                 throw PackLoadError.unreadable(fileName)
             }
             try file.read(into: buffer)
-            buffers[fileName] = buffer
+            // 裁掉前导低电平段——这是按键到出声之间最大的延迟来源
+            buffers[fileName] = AudioTrim.trimmingLeadIn(buffer)
         }
 
         guard let format else { throw PackLoadError.empty }

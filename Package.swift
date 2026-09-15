@@ -8,6 +8,7 @@ let package = Package(
         .target(name: "KbSoundCore"),
         .executableTarget(name: "KbSound", dependencies: ["KbSoundCore"]),
         .executableTarget(name: "TapProbe"),
+        .executableTarget(name: "LatencyProbe"),
         .testTarget(name: "KbSoundCoreTests", dependencies: ["KbSoundCore"]),
     ]
 )

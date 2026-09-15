@@ -71,3 +71,19 @@ private func realPack(_ dirName: String) throws -> PackRef {
         _ = try LoadedPack(ref: realPack(dir))  // 任何一套解码失败都会让测试失败
     }
 }
+
+@Test func trimsLeadInSoSoundsStartPromptly() throws {
+    // mx-brown-pbt 原始录音要 23.7ms 才达到半峰；加载后应当立刻起振
+    let pack = try LoadedPack(ref: realPack("mx-brown-pbt"))
+    let buffer = try #require(pack.buffer(for: 0, phase: .down))
+    var peak: Float = 0
+    for i in 0..<Int(buffer.frameLength) { peak = max(peak, abs(buffer.floatChannelData![0][i])) }
+
+    var halfPeakFrame = Int(buffer.frameLength)
+    for i in 0..<Int(buffer.frameLength) where abs(buffer.floatChannelData![0][i]) >= peak * 0.5 {
+        halfPeakFrame = i
+        break
+    }
+    let ms = Double(halfPeakFrame) / buffer.format.sampleRate * 1000
+    #expect(ms < 5)
+}
