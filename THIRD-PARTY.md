@@ -25,9 +25,17 @@
 原始格式是 Mechvibes 的 `config.json`（Linux/X11 键码），
 已由 `scripts/import-mechvibes.py` 转换为本项目的 manifest 格式（macOS 虚拟键码）。
 
-### 分发限制
+### 分发说明
 
-鉴于上述 15 套音频的授权状况不明，**本项目仅供本机自用，不得公开分发打包好的 .app。**
+代码部分采用 MIT 许可（见 `LICENSE`），**不覆盖 `Resources/Packs/` 下的音频文件**。
+
+上述 15 套音频的授权链并不清晰：上游 klinkmac 仓库本身是 MIT，但音频文件在
+manifest 中标注的 `author` 为 "Mechvibes Community"、`license` 为 unknown，
+无从追溯到原始录制者。本仓库保留原始出处标注、不主张对这些音频的任何权利。
+**若你是其中某段录音的权利人并希望移除，请开 issue，会立即撤下。**
+
+以此为前提：转发或再分发这些音频前请自行确认其授权状况；
+本仓库不对音频部分提供任何授权担保。
 
 ## Claude Code Skills
 
