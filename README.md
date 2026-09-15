@@ -75,16 +75,22 @@ packs the onset RMS spans **23.7 dB** (`topre-silent` at −16.6 dBFS, `lofi` at
 −40.3 dBFS). At a fixed volume setting, switching packs used to mean a jarring
 jump in loudness.
 
-Each pack is measured on load and given a single gain that aligns it to a target
-of −28 dBFS, which brings the spread down to **2.9 dB**. Three deliberate choices
-(`Sources/KbSoundCore/LoudnessNormalizer.swift`):
+Each pack is measured on load and given a single gain that aligns it to a common
+target, bringing the spread down to **2.9 dB**. The target (−34 dBFS) is chosen so
+the median gain across the 21 packs is ~0 dB: normalization *aligns* packs without
+making anything louder, so a given slider position sounds the same as it always did.
+Four deliberate choices (`Sources/KbSoundCore/LoudnessNormalizer.swift`):
 
 1. **One gain per pack, not per file.** A spacebar recorded louder than the letter
    keys is the pack author's intent; per-file normalization would flatten it.
 2. **RMS over a 120 ms window after onset**, not over the whole file. Whole-file RMS
    is skewed by tail length and trailing silence, while the perceived loudness of a
    keystroke comes almost entirely from the onset.
-3. **Soft limiting instead of backing the gain off.** A few packs (`cream-travel`,
+3. **A target that leaves overall volume alone.** The first attempt aimed at the
+   median *recorded* level (−28 dBFS) and made everything 5.25 dB louder, since most
+   packs sit well below their own median. The target is now pinned so the default
+   pack comes out at −0.75 dB.
+4. **Soft limiting instead of backing the gain off.** A few packs (`cream-travel`,
    `mx-brown-pbt`) already peak near full scale but sit low in RMS; leaving peak
    headroom would mean they could never be brought up. A few dB of tanh soft limiting
    on a transient that short is inaudible.
@@ -94,7 +100,8 @@ while typing is set by the default sound covering most keys, not by the one mapp
 only to the spacebar.
 
 中文：21 套内置包的录制电平跨度达 23.7dB，切包时音量忽大忽小。加载时按整包算一个
-增益对齐到 −28dBFS，残差收敛到 2.9dB。取舍见上面三点，实现在
+增益拉齐，残差收敛到 2.9dB；目标电平取 −34dBFS，使增益中位数约为 0dB——
+归一只拉齐、不改变整体音量。取舍见上面四点，实现在
 `LoudnessNormalizer.swift`，由 `LoudnessNormalizerTests.swift` 的真实数据测试守住。
 
 ## Sound packs / 音效包

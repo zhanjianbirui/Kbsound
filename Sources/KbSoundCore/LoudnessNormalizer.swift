@@ -17,8 +17,14 @@ import Foundation
 ///   mx-brown-pbt）峰值已经贴顶但 RMS 很低，只按峰值留余量的话它们永远拉不上来；
 ///   按键音是极短的瞬态，几 dB 的软限幅听不出来，响度却能对齐。
 public enum LoudnessNormalizer {
-    /// 目标响度，取 21 套内置包的中位数附近。线性值，对应 −28dBFS。
-    public static let targetRMS: Float = 0.0398
+    /// 目标响度。线性值，对应 −34dBFS。
+    ///
+    /// 这个数不是随便取的：它使默认包 mx-brown-pbt 的增益落在 −0.75dB，
+    /// 也正好是 21 套包的增益中位数。换句话说，归一只是把各包**拉齐**，
+    /// 不改变整体音量——同一个滑块位置，听感和没有归一时一样响。
+    /// 先前取 −28dBFS（各包原始电平的中位数）是错的：多数包本就在 −30～−40dBFS，
+    /// 整体被抬高了 5.25dB，滑块得往回拉很多才能用。
+    public static let targetRMS: Float = 0.01995
     /// 增益后允许的峰值上限。留一点余量，避免连打时多声叠加削顶。
     public static let peakCeiling: Float = 0.99
     /// 增益上下限，约 ±18dB。防止近乎无声的包被放大成噪声。

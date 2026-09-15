@@ -108,6 +108,8 @@ private let repoRoot = URL(filePath: #filePath)
 
 @Test func bundledPacksConvergeToTheSameLoudness() throws {
     // 归一前跨度 23.7dB（topre-silent −16.6dBFS vs lofi −40.3dBFS），归一后 2.9dB。
+    // 注意这里只管「齐不齐」，不管「响不响」——整体电平由 targetRMS 决定，
+    // 由 normalizationDoesNotRaiseOverallLoudness 守住。
     // 这条测试锁住的是「切包不会忽大忽小」这个实际体感。
     // 只统计按下音；有独立抬键音的包（tplai 那几套）会因此略高一点，属预期。
     let loader = SoundPackLoader(searchPaths: [repoRoot.appending(path: "Resources/Packs")])
@@ -137,4 +139,24 @@ private let repoRoot = URL(filePath: #filePath)
             }
         }
     }
+}
+
+@Test func normalizationDoesNotRaiseOverallLoudness() throws {
+    // 归一的职责是拉齐，不是变响。整体音量必须保持不变，否则用户每次
+    // 升级后都得重新把滑块往回拉——最初取 −28dBFS 就犯了这个错，
+    // 中位数被抬高 5.25dB。
+    let loader = SoundPackLoader(searchPaths: [repoRoot.appending(path: "Resources/Packs")])
+    let gains = try loader.availablePacks()
+        .map { 20 * log10(try LoadedPack(ref: $0).gain) }
+        .sorted()
+    let median = gains[gains.count / 2]
+    #expect(abs(median) < 1.5, "增益中位数 \(median)dB，整体音量被改变了")
+}
+
+@Test func defaultPackIsEssentiallyUnchanged() throws {
+    // 绝大多数用户听的是默认包，它的增益必须接近 0dB
+    let loader = SoundPackLoader(searchPaths: [repoRoot.appending(path: "Resources/Packs")])
+    let ref = try #require(loader.availablePacks().first { $0.id == Settings.defaultPackID })
+    let db = 20 * log10(try LoadedPack(ref: ref).gain)
+    #expect(abs(db) < 1.5, "默认包增益 \(db)dB")
 }
