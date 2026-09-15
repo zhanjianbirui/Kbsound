@@ -4,9 +4,23 @@ macOS 菜单栏小工具：敲键盘时播放机械键盘音效。
 
 ## 安装
 
+打包成 DMG（推荐，便于在多台机器上装）：
+
+    ./scripts/dmg.sh
+    open build/
+
+挂载后把 KbSound 拖到 Applications。也可以只打 .app：
+
     ./scripts/bundle.sh
     cp -R build/KbSound.app /Applications/
     open /Applications/KbSound.app
+
+> 本 app 使用 ad-hoc 签名，没有开发者证书。在**别的机器**上首次打开会被
+> Gatekeeper 拦下，需要右键点 KbSound 选「打开」，或执行
+> `xattr -dr com.apple.quarantine /Applications/KbSound.app`。
+>
+> 另注意：ad-hoc 签名按代码哈希识别身份，**每次重新打包都会让已有的
+> 辅助功能授权失效**，需要在系统设置里删掉旧条目重新勾选。
 
 首次运行需要在 **系统设置 › 隐私与安全性 › 辅助功能** 中勾选 KbSound。
 授权后无需重启，app 每 2 秒轮询一次，拿到权限就自动开始工作。
@@ -18,7 +32,7 @@ macOS 菜单栏小工具：敲键盘时播放机械键盘音效。
 
 点菜单栏的键盘图标打开面板：
 
-- **键盘音效**：总开关。关闭后图标变为 `keyboard.slash`
+- **键盘音效**：总开关。关闭或未授权时菜单栏图标变为喇叭划线
 - **音量**：实时生效
 - **音效包**：内置 21 套，点击即切换
 - **导入音效包…**：见下
