@@ -32,7 +32,7 @@ public final class MenuBarController {
         popover.contentViewController = hosting
 
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = icon(enabled: state.isEnabled)
+        item.button?.image = MenuBarIcon.image(active: state.isEnabled)
         item.button?.target = self
         item.button?.action = #selector(togglePopover)
         item.button?.setAccessibilityLabel("KbSound 键盘音效")
@@ -40,17 +40,9 @@ public final class MenuBarController {
         Self.logger.info("菜单栏项已安装")
     }
 
-    /// 图标必须是 template，才能自动适配深浅色与菜单栏材质。
-    private func icon(enabled: Bool) -> NSImage? {
-        let name = enabled ? "keyboard" : "keyboard.slash"
-        let image = NSImage(systemSymbolName: name, accessibilityDescription: "键盘音效")
-        image?.isTemplate = true
-        return image
-    }
-
     public func refreshIcon() {
         let active = state.isEnabled && state.status == .ok
-        statusItem?.button?.image = icon(enabled: active)
+        statusItem?.button?.image = MenuBarIcon.image(active: active)
     }
 
     @objc private func togglePopover() {
