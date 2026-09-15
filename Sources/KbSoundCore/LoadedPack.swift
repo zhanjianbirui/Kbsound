@@ -25,6 +25,12 @@ public struct LoadedPack: @unchecked Sendable {
     /// 所以 AudioPlayer 切包时必须据此重连节点。
     public let format: AVAudioFormat
 
+    /// macOS 虚拟键码的取值范围，用于遍历整个键盘。
+    private static let keyCodeRange = 128
+
+    /// 本包的响度归一增益，1 表示未调整。仅供日志与测试观察。
+    public let gain: Float
+
     private let manifest: PackManifest
     /// 文件名 → buffer。同一文件被多个 keyCode 引用时只存一份。
     private let buffers: [String: AVAudioPCMBuffer]
@@ -66,9 +72,21 @@ public struct LoadedPack: @unchecked Sendable {
 
         guard let format else { throw PackLoadError.empty }
 
+        // 整包一个增益，各包响度才对得齐；包内的强弱关系原样保留。
+        // 按键位数加权：一个文件被多少个键用到，就在测量里占多少分量——
+        // 决定「打起来有多响」的是覆盖大多数键的那个默认音，不是只给空格用的那个。
+        let weighted = (0..<Self.keyCodeRange).flatMap { keyCode in
+            [KeyPhase.down, .up].compactMap { phase in
+                manifest.fileName(for: keyCode, phase: phase).flatMap { buffers[$0] }
+            }
+        }
+        let gain = LoudnessNormalizer.gain(for: weighted)
+        Self.logger.info("\(manifest.id, privacy: .public) 响度增益 \(gain, privacy: .public)x")
+
         self.ref = ref
         self.manifest = manifest
-        self.buffers = buffers
+        self.buffers = buffers.mapValues { LoudnessNormalizer.applying(gain: gain, to: $0) }
+        self.gain = gain
         self.format = format
     }
 

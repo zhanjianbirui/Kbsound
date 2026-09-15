@@ -62,8 +62,9 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
         let pack = try LoadedPack(ref: try PackImporter.importPack(from: source, into: destination))
         let a = try #require(pack.buffer(for: 0, phase: .down))    // A 在第 2 行 → 0.3
         let q = try #require(pack.buffer(for: 12, phase: .down))   // Q 在第 1 行 → 0.2
-        #expect(abs(a.floatChannelData![0][100] - 0.3) < 0.01)
-        #expect(abs(q.floatChannelData![0][100] - 0.2) < 0.01)
+        // 除掉整包的响度归一增益，还原成录制电平再比对
+        #expect(abs(a.floatChannelData![0][100] / pack.gain - 0.3) < 0.01)
+        #expect(abs(q.floatChannelData![0][100] / pack.gain - 0.2) < 0.01)
     }
 }
 
@@ -166,8 +167,8 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
         let pack = try LoadedPack(ref: try PackImporter.importPack(from: source, into: destination))
         let esc = try #require(pack.buffer(for: 53, phase: .down))   // X11 1 = Esc
         let a = try #require(pack.buffer(for: 0, phase: .down))      // X11 30 = A
-        #expect(abs(esc.floatChannelData![0][100] - 0.8) < 0.01)
-        #expect(abs(a.floatChannelData![0][100] - 0.2) < 0.01)
+        #expect(abs(esc.floatChannelData![0][100] / pack.gain - 0.8) < 0.01)
+        #expect(abs(a.floatChannelData![0][100] / pack.gain - 0.2) < 0.01)
     }
 }
 
