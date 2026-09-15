@@ -1,0 +1,326 @@
+{
+  "formatVersion": 1,
+  "id": "com.tplai.cream-travel",
+  "name": "NK Cream · Full Travel",
+  "author": "Thomas Lai (tplai/kbsim)",
+  "version": "1.0.0",
+  "description": "Deep POM creaminess, including the release.",
+  "defaults": {
+    "down": "press/GENERIC_R2.mp3",
+    "up": "release/GENERIC.mp3"
+  },
+  "keys": {
+    "50": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "18": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "19": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "20": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "21": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "23": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "22": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "26": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "28": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "25": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "29": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "27": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "24": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "51": {
+      "down": "press/BACKSPACE.mp3",
+      "up": "release/BACKSPACE.mp3"
+    },
+    "53": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "122": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "120": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "99": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "118": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "96": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "97": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "98": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "100": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "101": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "109": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "103": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "111": {
+      "down": "press/GENERIC_R0.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "48": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "12": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "13": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "14": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "15": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "17": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "16": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "32": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "34": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "31": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "35": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "33": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "30": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "42": {
+      "down": "press/GENERIC_R1.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "57": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "0": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "1": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "2": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "3": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "5": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "4": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "38": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "40": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "37": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "41": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "39": {
+      "down": "press/GENERIC_R2.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "36": {
+      "down": "press/ENTER.mp3",
+      "up": "release/ENTER.mp3"
+    },
+    "56": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "6": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "7": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "8": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "9": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "11": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "45": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "46": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "43": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "47": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "44": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "60": {
+      "down": "press/GENERIC_R3.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "63": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "59": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "58": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "55": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "49": {
+      "down": "press/SPACE.mp3",
+      "up": "release/SPACE.mp3"
+    },
+    "54": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "61": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "62": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "123": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "124": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "125": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    },
+    "126": {
+      "down": "press/GENERIC_R4.mp3",
+      "up": "release/GENERIC.mp3"
+    }
+  }
+}

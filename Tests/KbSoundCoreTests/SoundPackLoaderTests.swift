@@ -112,6 +112,6 @@ private func goodManifest(id: String, name: String) -> String {
         .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
     let loader = SoundPackLoader(searchPaths: [repoRoot.appending(path: "Resources/Packs")])
     let packs = loader.availablePacks()
-    #expect(packs.count == 15)
+    #expect(packs.count == 21)
     #expect(packs.contains { $0.id == "com.klinkmac.mx-brown-pbt" })
 }

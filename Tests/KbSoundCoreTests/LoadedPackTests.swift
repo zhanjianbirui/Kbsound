@@ -66,7 +66,7 @@ private func realPack(_ dirName: String) throws -> PackRef {
 @Test func everyBundledPackDecodes() throws {
     let packsDir = repoRoot.appending(path: "Resources/Packs")
     let dirs = try FileManager.default.contentsOfDirectory(atPath: packsDir.path).sorted()
-    #expect(dirs.count == 15)
+    #expect(dirs.count == 21)
     for dir in dirs {
         _ = try LoadedPack(ref: realPack(dir))  // 任何一套解码失败都会让测试失败
     }

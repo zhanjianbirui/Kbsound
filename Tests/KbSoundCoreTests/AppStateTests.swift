@@ -17,7 +17,7 @@ private func makeState(settings: Settings = isolatedSettings()) -> AppState {
 
 @MainActor
 @Test func discoversAllBundledPacks() {
-    #expect(makeState().packs.count == 15)
+    #expect(makeState().packs.count == 21)
 }
 
 @MainActor
