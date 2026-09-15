@@ -10,9 +10,9 @@ public final class Settings {
         static let packID = "KbSound.packID"
     }
 
-    private let defaults: UserDefaults
+    private let defaults: SettingsStore
 
-    public init(defaults: UserDefaults = .standard) {
+    public init(defaults: SettingsStore = UserDefaults.standard) {
         self.defaults = defaults
         defaults.register(defaults: [
             Key.enabled: true,

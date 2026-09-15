@@ -2,58 +2,40 @@ import Foundation
 import Testing
 @testable import KbSoundCore
 
-/// 固定计数器和锁，用于生成可重用的 UserDefaults 套件名。
-/// 每次测试运行后重置计数器，确保跨运行重用相同的套件名。
-nonisolated(unsafe) private var suiteCounter = 0
-nonisolated(unsafe) private var lastAccessTime: Int64 = 0
-private let suiteLock = NSLock()
+/// 纯内存的 `SettingsStore`，让每个测试完全隔离且不碰磁盘。
+///
+/// 曾经用过独立的 `UserDefaults` suite，但两种写法都有问题：可复用的递增套件名会让
+/// 上一轮的脏数据在冷启动时被读到（`defaultsAreSensible` 随机失败），而唯一套件名
+/// 即便清空了数据，cfprefsd 仍会在 `~/Library/Preferences` 留下空 plist 文件。
+private final class InMemoryStore: SettingsStore {
+    private var values: [String: Any] = [:]
+    private var registered: [String: Any] = [:]
 
-/// 获取下一个套件名（可重用且可预测）。
-private func nextSuiteName() -> String {
-    suiteLock.lock()
-    defer { suiteLock.unlock() }
+    func bool(forKey key: String) -> Bool { value(forKey: key) as? Bool ?? false }
+    func double(forKey key: String) -> Double { value(forKey: key) as? Double ?? 0 }
+    func string(forKey key: String) -> String? { value(forKey: key) as? String }
 
-    let now = Int64(Date().timeIntervalSince1970 * 1000)
-    // 如果距离上次访问超过5秒，视为新的测试运行，重置计数器
-    if lastAccessTime > 0 && now - lastAccessTime > 5000 {
-        suiteCounter = 0
-    }
-    lastAccessTime = now
-
-    suiteCounter += 1
-    return "com.kbsound.tests.\(suiteCounter)"
-}
-
-/// 独立 UserDefaults suite 的 fixture，测试结束后自动清理。
-/// 使用递增计数器生成套件名，以便跨测试运行重用 plist 文件。
-private struct IsolatedSettingsFixture: ~Copyable {
-    let suiteName: String
-    let defaults: UserDefaults
-    let settings: Settings
-
-    init() {
-        suiteName = nextSuiteName()
-        defaults = UserDefaults(suiteName: suiteName)!
-        settings = Settings(defaults: defaults)
+    func set(_ value: Any?, forKey key: String) {
+        if let value { values[key] = value } else { values.removeValue(forKey: key) }
     }
 
-    deinit {
-        UserDefaults.standard.removePersistentDomain(forName: suiteName)
-        UserDefaults.standard.synchronize()
+    /// 与 `UserDefaults.register` 语义一致：只在没有显式写入时兜底。
+    func register(defaults registrationDictionary: [String: Any]) {
+        registered.merge(registrationDictionary) { current, _ in current }
     }
+
+    private func value(forKey key: String) -> Any? { values[key] ?? registered[key] }
 }
 
 @Test func defaultsAreSensible() {
-    let fixture = IsolatedSettingsFixture()
-    let s = fixture.settings
+    let s = Settings(defaults: InMemoryStore())
     #expect(s.isEnabled == true)
     #expect(s.volume == 0.5)
     #expect(s.packID == "com.klinkmac.mx-brown-pbt")
 }
 
 @Test func valuesRoundTrip() {
-    let fixture = IsolatedSettingsFixture()
-    let s = fixture.settings
+    let s = Settings(defaults: InMemoryStore())
     s.isEnabled = false
     s.volume = 0.25
     s.packID = "com.klinkmac.nk-cream"
@@ -63,8 +45,7 @@ private struct IsolatedSettingsFixture: ~Copyable {
 }
 
 @Test func volumeIsClampedOnWrite() {
-    let fixture = IsolatedSettingsFixture()
-    let s = fixture.settings
+    let s = Settings(defaults: InMemoryStore())
     s.volume = -1
     #expect(s.volume == 0)
     s.volume = 2
@@ -73,23 +54,19 @@ private struct IsolatedSettingsFixture: ~Copyable {
 
 @Test func volumeIsClampedOnRead() {
     // 外部写坏了配置文件也不能让音量越界
-    let suite = nextSuiteName()
-    let defaults = UserDefaults(suiteName: suite)!
-    defer {
-        UserDefaults.standard.removePersistentDomain(forName: suite)
-        UserDefaults.standard.synchronize()
-    }
-    defaults.set(99.0, forKey: "KbSound.volume")
-    #expect(Settings(defaults: defaults).volume == 1)
+    let store = InMemoryStore()
+    store.set(99.0, forKey: "KbSound.volume")
+    #expect(Settings(defaults: store).volume == 1)
 }
 
 @Test func settingsPersistAcrossInstances() {
-    let suite = nextSuiteName()
-    let defaults = UserDefaults(suiteName: suite)!
-    defer {
-        UserDefaults.standard.removePersistentDomain(forName: suite)
-        UserDefaults.standard.synchronize()
-    }
-    Settings(defaults: defaults).volume = 0.8
-    #expect(Settings(defaults: defaults).volume == 0.8)
+    let store = InMemoryStore()
+    Settings(defaults: store).volume = 0.8
+    #expect(Settings(defaults: store).volume == 0.8)
+}
+
+/// 真正的 `UserDefaults` 必须满足同一份协议契约——内存 fake 不能掩盖签名不匹配。
+@Test func userDefaultsConformsToSettingsStore() {
+    let store: SettingsStore = UserDefaults.standard
+    #expect(store is UserDefaults)
 }
