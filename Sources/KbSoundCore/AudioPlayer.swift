@@ -63,6 +63,10 @@ public final class AudioPlayer {
             engine.connect(node, to: engine.mainMixerNode, format: format)
         }
 
+        // 必须在 start 之前：buffer 大小决定播放调度的量化粒度，
+        // 也是按键到出声那段间隔的主要来源。设备切换后本方法会被重新调用。
+        OutputDeviceLatency.minimize()
+
         engine.prepare()
         try engine.start()
         for node in nodes { node.play() }
