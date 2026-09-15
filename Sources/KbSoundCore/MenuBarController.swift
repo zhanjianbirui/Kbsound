@@ -14,7 +14,15 @@ public final class MenuBarController {
 
     public func install() {
         popover.behavior = .transient
-        popover.contentViewController = NSHostingController(rootView: PopoverView(state: state))
+        let content = PopoverView(state: state) { [popover] work in
+            // 模态面板期间改成 applicationDefined，结束后恢复，
+            // 否则 NSOpenPanel 一弹出 popover 就自己关了
+            let previous = popover.behavior
+            popover.behavior = .applicationDefined
+            defer { popover.behavior = previous }
+            work()
+        }
+        popover.contentViewController = NSHostingController(rootView: content)
 
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         item.button?.image = icon(enabled: state.isEnabled)

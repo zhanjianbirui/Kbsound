@@ -58,10 +58,14 @@ public final class AppState {
     @ObservationIgnored private var tap: KeyEventTap!
     @ObservationIgnored private var loadedPack: LoadedPack?
     @ObservationIgnored private var permissionTimer: Timer?
+    /// 导入的音效包装到这里。为 nil 时界面不显示导入入口。
+    @ObservationIgnored private let userPacksDirectory: URL?
 
-    public init(settings: Settings = Settings(), searchPaths: [URL]) {
+    public init(settings: Settings = Settings(), searchPaths: [URL],
+                userPacksDirectory: URL? = nil) {
         self.settings = settings
         self.loader = SoundPackLoader(searchPaths: searchPaths)
+        self.userPacksDirectory = userPacksDirectory
         self.isEnabled = settings.isEnabled
         self.volume = settings.volume
         self.selectedPackID = settings.packID
@@ -90,6 +94,16 @@ public final class AppState {
         permissionTimer = nil
         tap.stop()
         player.stop()
+    }
+
+    public var canImportPacks: Bool { userPacksDirectory != nil }
+
+    /// 导入一个外部音效包并立刻切换过去。失败时抛出，界面状态保持原样。
+    public func importPack(from source: URL) throws {
+        guard let userPacksDirectory else { throw PackImporter.ImportError.unrecognizedFormat }
+        let ref = try PackImporter.importPack(from: source, into: userPacksDirectory)
+        packs = loader.availablePacks()
+        selectedPackID = ref.id
     }
 
     /// 用户点击提示条时弹出系统授权对话框并打开设置面板。

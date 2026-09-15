@@ -22,7 +22,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 搜索路径优先级从低到高：用户包覆盖同 id 的内置包
-        let state = AppState(searchPaths: [builtInPacksURL(), userPacksURL()])
+        let state = AppState(searchPaths: [builtInPacksURL(), userPacksURL()],
+                             userPacksDirectory: userPacksURL())
         let menuBar = MenuBarController(state: state)
         menuBar.install()
         state.start()
