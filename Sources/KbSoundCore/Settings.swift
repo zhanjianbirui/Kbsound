@@ -1,6 +1,7 @@
 import Foundation
 
-/// 用户偏好的持久化。开机自启不在这里——那以 SMAppService 的状态为唯一数据源。
+/// Persistence for user preferences. Launch at login lives elsewhere — `SMAppService`
+/// is the single source of truth for that.
 public final class Settings {
     public static let defaultPackID = "com.klinkmac.mx-brown-pbt"
 
@@ -26,7 +27,8 @@ public final class Settings {
         set { defaults.set(newValue, forKey: Key.enabled) }
     }
 
-    /// 读写都钳制到 0...1——外部改坏配置也不该让音量越界。
+    /// Clamped to 0...1 on both read and write — a stored value corrupted from outside
+    /// should not push the volume out of range.
     public var volume: Double {
         get { Self.clamp(defaults.double(forKey: Key.volume)) }
         set { defaults.set(Self.clamp(newValue), forKey: Key.volume) }

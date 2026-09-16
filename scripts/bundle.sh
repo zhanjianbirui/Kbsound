@@ -1,26 +1,30 @@
 #!/usr/bin/env bash
-# 把 SwiftPM 产物组装成可双击运行的 .app。
+# Assembles the SwiftPM products into a double-clickable .app.
 #
-# 必须打包成 bundle 的原因：
-#   1. 辅助功能权限按 bundle identifier 授予，裸二进制每次重编都要重新授权
-#   2. SMAppService（开机自启）要求 bundle
+# Why a bundle is required:
+#   1. Accessibility permission is granted per bundle identifier — a bare binary would
+#      need re-authorizing after every rebuild.
+#   2. SMAppService (launch at login) requires a bundle.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
 APP_NAME="KbSound"
-BUNDLE_ID="com.kbsound.KbSound"   # 永不修改：改了辅助功能授权会失效
+BUNDLE_ID="com.kbsound.KbSound"   # Never change this: it would invalidate the Accessibility grant.
 APP="build/${APP_NAME}.app"
 
-echo "==> 编译 release"
+echo "==> Building release"
 swift build -c release --product "$APP_NAME"
 
-echo "==> 组装 ${APP}"
+echo "==> Assembling ${APP}"
 rm -rf "$APP"
 mkdir -p "${APP}/Contents/MacOS" "${APP}/Contents/Resources"
 
 cp ".build/release/${APP_NAME}" "${APP}/Contents/MacOS/${APP_NAME}"
 cp -R "Resources/Packs" "${APP}/Contents/Resources/Packs"
+# The localized UI strings live in the KbSoundCore resource bundle; without it the app
+# falls back to the raw keys.
+cp -R ".build/release/${APP_NAME}_KbSoundCore.bundle" "${APP}/Contents/Resources/"
 
 cat > "${APP}/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -33,15 +37,21 @@ cat > "${APP}/Contents/Info.plist" <<PLIST
     <key>CFBundlePackageType</key>       <string>APPL</string>
     <key>CFBundleShortVersionString</key><string>1.0</string>
     <key>CFBundleVersion</key>           <string>1</string>
+    <key>CFBundleDevelopmentRegion</key> <string>en</string>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>zh-Hans</string>
+    </array>
     <key>LSMinimumSystemVersion</key>    <string>26.0</string>
     <key>LSUIElement</key>               <true/>
 </dict>
 </plist>
 PLIST
 
-echo "==> ad-hoc 签名"
+echo "==> Ad-hoc signing"
 codesign --force --deep --sign - "$APP"
 
-echo "==> 完成：${APP}"
-echo "    首次运行前先执行：open build/"
-echo "    然后把 KbSound.app 拖到 /Applications 再双击。"
+echo "==> Done: ${APP}"
+echo "    Before the first run: open build/"
+echo "    Then drag KbSound.app into /Applications and double-click it."

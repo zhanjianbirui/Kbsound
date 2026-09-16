@@ -3,9 +3,10 @@ import PackageDescription
 
 let package = Package(
     name: "KbSound",
+    defaultLocalization: "en",
     platforms: [.macOS(.v26)],
     targets: [
-        .target(name: "KbSoundCore"),
+        .target(name: "KbSoundCore", resources: [.process("Resources")]),
         .executableTarget(name: "KbSound", dependencies: ["KbSoundCore"]),
         .executableTarget(name: "TapProbe"),
         .executableTarget(name: "LatencyProbe"),

@@ -28,7 +28,7 @@ import Testing
 }
 
 @Test func volumeIsClampedOnRead() {
-    // 外部写坏了配置文件也不能让音量越界
+    // A preferences file corrupted from outside must not push the volume out of range
     let store = InMemoryStore()
     store.set(99.0, forKey: "KbSound.volume")
     #expect(Settings(defaults: store).volume == 1)
@@ -40,7 +40,8 @@ import Testing
     #expect(Settings(defaults: store).volume == 0.8)
 }
 
-/// 真正的 `UserDefaults` 必须满足同一份协议契约——内存 fake 不能掩盖签名不匹配。
+/// The real `UserDefaults` has to satisfy the same protocol contract — the in-memory fake
+/// must not hide a signature mismatch.
 @Test func userDefaultsConformsToSettingsStore() {
     let store: SettingsStore = UserDefaults.standard
     #expect(store is UserDefaults)

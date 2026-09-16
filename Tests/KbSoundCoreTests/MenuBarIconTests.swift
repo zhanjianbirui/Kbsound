@@ -3,11 +3,12 @@ import Testing
 @testable import KbSoundCore
 
 @Test func everySymbolNameResolvesToAnImage() {
-    // 符号名写错时 NSImage 返回 nil，菜单栏按钮会变成空白不可见——
-    // 曾经用过并不存在的 "keyboard.slash"，没权限时图标就整个消失了。
+    // NSImage returns nil for a misspelled symbol name and the status item goes blank —
+    // an earlier version used "keyboard.slash", which does not exist, so the icon
+    // disappeared entirely when permission was missing.
     for name in MenuBarIcon.allSymbolNames {
         #expect(NSImage(systemSymbolName: name, accessibilityDescription: nil) != nil,
-                "SF Symbol \"\(name)\" 不存在")
+                "SF Symbol \"\(name)\" does not exist")
     }
 }
 
@@ -22,7 +23,7 @@ import Testing
 }
 
 @Test func theTwoStatesLookDifferent() {
-    // 两个状态用同一个符号的话，用户看不出开关有没有生效
+    // With the same symbol for both states the user cannot tell whether the switch worked
     #expect(MenuBarIcon.activeSymbol != MenuBarIcon.inactiveSymbol)
 }
 

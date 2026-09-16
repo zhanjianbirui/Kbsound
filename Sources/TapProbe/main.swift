@@ -1,11 +1,12 @@
 import Cocoa
 
-// 输出不接终端时 stdout 默认是块缓冲，敲键的日志会堵在缓冲区里看不见。
-// 这个探针的全部意义就是给人看实时反馈，所以关掉缓冲。
+// When stdout is not attached to a terminal it is block-buffered by default, so the
+// keystroke log would sit in the buffer unseen. This probe exists purely to give a
+// human live feedback, so turn buffering off.
 setbuf(stdout, nil)
 
 guard AXIsProcessTrusted() else {
-    print("❌ 无辅助功能权限。请到 系统设置 > 隐私与安全性 > 辅助功能 勾选运行本程序的终端，然后重试。")
+    print("❌ No Accessibility permission. Tick the terminal running this program in System Settings › Privacy & Security › Accessibility, then try again.")
     exit(1)
 }
 
@@ -14,7 +15,7 @@ let mask = (1 << CGEventType.keyDown.rawValue) | (1 << CGEventType.keyUp.rawValu
 let callback: CGEventTapCallBack = { _, type, event, _ in
     switch type {
     case .tapDisabledByTimeout, .tapDisabledByUserInput:
-        print("⚠️  tap 被系统禁用，重新启用")
+        print("⚠️  The system disabled the tap; re-enabling")
     case .keyDown, .keyUp:
         let code = event.getIntegerValueField(.keyboardEventKeycode)
         let repeated = event.getIntegerValueField(.keyboardEventAutorepeat) != 0
@@ -33,12 +34,12 @@ guard let tap = CGEvent.tapCreate(
     callback: callback,
     userInfo: nil
 ) else {
-    print("❌ CGEvent.tapCreate 返回 nil —— 这条路在本系统上不通")
+    print("❌ CGEvent.tapCreate returned nil — this route is not available on this system")
     exit(1)
 }
 
 let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
 CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
 CGEvent.tapEnable(tap: tap, enable: true)
-print("✅ tap 已建立。随便敲几个键，Ctrl+C 退出。")
+print("✅ Tap installed. Type a few keys; Ctrl+C to quit.")
 CFRunLoopRun()

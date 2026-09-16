@@ -22,7 +22,7 @@ private func testFormat(sampleRate: Double = 44100, channels: AVAudioChannelCoun
     try player.prepare(format: format)
     let generation = player.reconnectCount
     try player.prepare(format: format)
-    #expect(player.reconnectCount == generation)  // 格式没变，不该重连
+    #expect(player.reconnectCount == generation)  // Format unchanged, so it must not reconnect
     player.stop()
 }
 
@@ -53,14 +53,15 @@ private func testFormat(sampleRate: Double = 44100, channels: AVAudioChannelCoun
     let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 4410)!
     buffer.frameLength = 4410
 
-    // 预热，排除首次调用的一次性开销
+    // Warm up to exclude the one-off cost of the first call
     for _ in 0..<10 { player.play(buffer) }
 
     let start = ContinuousClock.now
     for _ in 0..<100 { player.play(buffer) }
     let perCall = (ContinuousClock.now - start) / 100
 
-    // 按键回调必须立刻返回。1ms 是很宽松的上限，正常应在几十微秒。
+    // The key callback has to return immediately. 1 ms is a very loose ceiling;
+    // it normally takes tens of microseconds.
     #expect(perCall < .milliseconds(1))
     player.stop()
 }

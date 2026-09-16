@@ -1,20 +1,24 @@
 import AVFoundation
 import Foundation
 
-/// 裁掉音效开头的低电平段。
+/// Trims the quiet lead-in at the start of a sound.
 ///
-/// 这是按键到「听见声音」之间最大的一段延迟来源，比引擎侧的一切都大一个数量级：
-/// klinkmac 的多套包录进了完整按键行程，真正的瞬态在文件开头之后很久才出现——
-/// 实测 MX Brown PBT 要 23.7ms，MX Black ABS 要 195.9ms 才达到半峰。
-/// 前导段本身并非静音（约为峰值的 2–6%），所以只看「是否为零」是裁不掉的，
-/// 必须按相对峰值的比例找起振点。
+/// This is by far the largest contributor to the gap between pressing a key and
+/// hearing it — an order of magnitude bigger than anything on the engine side.
+/// Several klinkmac packs recorded the full key travel, so the real transient starts
+/// long after the beginning of the file: measured at 23.7 ms for MX Brown PBT and
+/// 195.9 ms for MX Black ABS before reaching half peak.
+/// The lead-in is not actually silent (roughly 2–6% of peak), so a "is it zero?" test
+/// cannot trim it; the onset has to be found as a fraction of the peak level.
 public enum AudioTrim {
-    /// 起振判定门限，相对于整段峰值。
+    /// Onset threshold, relative to the peak of the whole buffer.
     static let onsetThreshold: Float = 0.15
-    /// 起振点之前保留的预卷时长。直接从起振点切会把瞬态削平，听起来像爆音。
+    /// Pre-roll kept before the onset. Cutting exactly at the onset flattens the
+    /// transient and sounds like a click.
     static let preRoll: Double = 0.002
 
-    /// 起振点之前可以裁掉的帧数。没有可裁的（或整段都很轻）时返回 0。
+    /// Number of frames that can be trimmed before the onset. Returns 0 when there is
+    /// nothing to trim (or the whole buffer is very quiet).
     public static func leadingFramesBeforeOnset(in buffer: AVAudioPCMBuffer) -> AVAudioFrameCount {
         guard let channels = buffer.floatChannelData, buffer.frameLength > 0 else { return 0 }
         let frameCount = Int(buffer.frameLength)
@@ -41,7 +45,8 @@ public enum AudioTrim {
         return AVAudioFrameCount(max(0, min(onset - preRollFrames, frameCount)))
     }
 
-    /// 裁掉前导段后的新 buffer；无需裁剪时原样返回。
+    /// A new buffer with the lead-in removed; returns the original when there is
+    /// nothing to trim.
     public static func trimmingLeadIn(_ buffer: AVAudioPCMBuffer) -> AVAudioPCMBuffer {
         let offset = leadingFramesBeforeOnset(in: buffer)
         guard offset > 0, let source = buffer.floatChannelData else { return buffer }

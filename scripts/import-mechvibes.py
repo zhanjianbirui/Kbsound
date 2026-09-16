@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""把 Mechvibes 音效包转换成 KbSound 的 manifest 格式。
+"""Converts Mechvibes sound packs into KbSound's manifest format.
 
-两边差异有三处，转换主要就是在抹平它们：
+The two formats differ in three ways, and the conversion is mostly about flattening them:
 
-1. **键码命名空间不同**。Mechvibes 用 Linux/X11 键码（14=Backspace、28=Enter、
-   57=Space），KbSound 用 macOS 虚拟键码（51/36/49）。所以不能直接搬 `defines`，
-   要按「这个键在键盘第几行」重新推导。
-2. **行变体是模式串**。`GENERIC_R{0-4}.mp3` 表示按键盘行取 5 个变体之一，
-   需要展开成每个 macOS 键码到具体文件的映射。
-3. **抬键音**。Mechvibes 的 `soundup` / `-up` 后缀对应我们的 `up` 字段。
+1. **Different key code namespaces.** Mechvibes uses Linux/X11 key codes (14=Backspace,
+   28=Enter, 57=Space) while KbSound uses macOS virtual key codes (51/36/49). `defines`
+   therefore cannot be copied across; it has to be re-derived from which keyboard row a
+   key sits in.
+2. **Row variants are a pattern string.** `GENERIC_R{0-4}.mp3` means "pick one of five
+   variants by keyboard row", which has to be expanded into a macOS key code → file map.
+3. **Key-up sounds.** Mechvibes' `soundup` and `-up` suffix map onto our `up` field.
 
-用法：
-    python3 scripts/import-mechvibes.py <mechvibes的src/audio目录> <输出目录>
+Usage:
+    python3 scripts/import-mechvibes.py <mechvibes src/audio dir> <output dir>
 """
 
 import json
@@ -20,8 +21,8 @@ import shutil
 import sys
 from pathlib import Path
 
-# macOS 虚拟键码 → 键盘行。行的含义与 Mechvibes 的 GENERIC_R{0-4} 一致：
-# R0 数字行、R1 QWERTY 行、R2 ASDF 行、R3 ZXCV 行、R4 底排与修饰键。
+# macOS virtual key code → keyboard row. Rows match Mechvibes' GENERIC_R{0-4}:
+# R0 number row, R1 QWERTY row, R2 ASDF row, R3 ZXCV row, R4 bottom row and modifiers.
 ROWS = {
     0: [50, 18, 19, 20, 21, 23, 22, 26, 28, 25, 29, 27, 24, 51,   # ` 1..0 - = Backspace
         53, 122, 120, 99, 118, 96, 97, 98, 100, 101, 109, 103, 111],  # Esc F1..F12
@@ -29,10 +30,10 @@ ROWS = {
     2: [57, 0, 1, 2, 3, 5, 4, 38, 40, 37, 41, 39, 36],            # Caps A..L ; ' Return
     3: [56, 6, 7, 8, 9, 11, 45, 46, 43, 47, 44, 60],              # Shift Z..M , . / RShift
     4: [63, 59, 58, 55, 49, 54, 61, 62,                           # Fn Ctrl Opt Cmd Space
-        123, 124, 125, 126],                                      # 方向键
+        123, 124, 125, 126],                                      # arrow keys
 }
 
-# Mechvibes 的特殊键（X11 键码）→ macOS 虚拟键码
+# Mechvibes' special keys (X11 codes) → macOS virtual key codes
 SPECIAL_KEYCODES = {"14": 51, "28": 36, "57": 49}
 
 ROW_PATTERN = re.compile(r"^(.*)R\{(\d+)-(\d+)\}(\..+)$")
@@ -51,14 +52,15 @@ def convert(source_dir, pack_name, out_dir, pack_id, display_name, detail):
     config = json.loads((source_dir / "config.json").read_text())
     row_files = expand_row_pattern(config["sound"])
     if row_files is None:
-        raise SystemExit(f"{pack_name}: 不支持的 sound 模式 {config['sound']!r}")
+        raise SystemExit(f"{pack_name}: unsupported sound pattern {config['sound']!r}")
 
     default_up = config.get("soundup")
     defines = config.get("defines", {})
 
-    # 特殊键：从 defines 里取 down/up，键码换成 macOS 的。
-    # 有的包（如 mxblue-travel）在 config 里声明了专属音却没附上文件，
-    # 所以逐个校验存在性，缺失的就当没声明，回退到该行的通用音。
+    # Special keys: take down/up from defines and translate the code to macOS.
+    # Some packs (mxblue-travel, for one) declare a dedicated sound in the config without
+    # shipping the file, so every path is checked; a missing one counts as undeclared and
+    # falls back to the row's generic sound.
     specials = {}
     for x11_code, mac_code in SPECIAL_KEYCODES.items():
         down = defines.get(x11_code)
@@ -73,7 +75,7 @@ def convert(source_dir, pack_name, out_dir, pack_id, display_name, detail):
         for keycode in keycodes:
             if keycode in specials:
                 down, up = specials[keycode]
-                # 只缺 down 时仍要有按下的声音，用该行的通用音补上
+                # A missing down still needs a press sound; fill it from the row's generic one
                 entry = {"down": down or row_files[row]}
                 if up or default_up:
                     entry["up"] = up or default_up
@@ -96,7 +98,7 @@ def convert(source_dir, pack_name, out_dir, pack_id, display_name, detail):
         "keys": keys,
     }
 
-    # 只拷贝 manifest 真正引用到的音频文件
+    # Copy only the audio files the manifest actually references
     referenced = {manifest["defaults"].get("down"), manifest["defaults"].get("up")}
     for entry in keys.values():
         referenced.update(entry.values())
@@ -109,16 +111,16 @@ def convert(source_dir, pack_name, out_dir, pack_id, display_name, detail):
     for rel in sorted(referenced):
         src = source_dir / rel
         if not src.exists():
-            raise SystemExit(f"{pack_name}: 缺少音频文件 {rel}")
+            raise SystemExit(f"{pack_name}: missing audio file {rel}")
         dst = out / rel
         dst.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, dst)
 
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n")
-    print(f"{pack_name}: {len(keys)} 个键码, {len(referenced)} 个音频文件")
+    print(f"{pack_name}: {len(keys)} key codes, {len(referenced)} audio files")
 
 
-# 要导入的包：源目录名 → (包 id, 显示名, 说明)
+# Packs to import: source directory name → (pack id, display name, description)
 PACKS = {
     "holy-pandas": ("com.tplai.holy-pandas", "Holy Pandas",
                     "Tactile thock with a rounded top-out — the enthusiast favourite."),

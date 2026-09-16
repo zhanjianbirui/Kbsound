@@ -1,7 +1,7 @@
-/// 推断修饰键的按下/抬起方向。
+/// Infers whether a modifier key went down or came up.
 ///
-/// `flagsChanged` 事件不带方向：按下 Shift 和松开 Shift 是同一种事件。
-/// 只能自己记住哪些键当前处于按下状态。
+/// `flagsChanged` events carry no direction: pressing Shift and releasing it look
+/// identical. The only option is to remember which keys are currently held.
 public struct ModifierTracker {
     private var heldKeys: Set<Int> = []
 
@@ -16,7 +16,7 @@ public struct ModifierTracker {
         return .down
     }
 
-    /// tap 重启后内部状态可能与现实不符，清空重来。
+    /// After the tap restarts the tracked state may no longer match reality; start over.
     public mutating func reset() {
         heldKeys.removeAll()
     }

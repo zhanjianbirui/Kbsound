@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# 把 KbSound.app 打成可分发的 .dmg。
+# Packs KbSound.app into a distributable .dmg.
 #
-# 注意：ad-hoc 签名没有开发者证书，在别的机器上首次打开会被 Gatekeeper 拦下，
-# 需要右键「打开」，或执行 xattr -dr com.apple.quarantine /Applications/KbSound.app
+# Note: ad-hoc signing means there is no developer certificate, so Gatekeeper blocks the
+# first launch on another machine. The user has to right-click → Open, or run
+# xattr -dr com.apple.quarantine /Applications/KbSound.app
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -13,18 +14,44 @@ VOLUME_NAME="${APP_NAME}"
 DMG="build/${APP_NAME}-${VERSION}.dmg"
 STAGING="build/dmg-staging"
 
-echo "==> 确保 .app 是最新的"
+echo "==> Making sure the .app is up to date"
 ./scripts/bundle.sh > /dev/null
 
-echo "==> 准备 DMG 内容"
+echo "==> Preparing the DMG contents"
 rm -rf "$STAGING" "$DMG"
 mkdir -p "$STAGING"
 cp -R "build/${APP_NAME}.app" "$STAGING/"
-# 拖拽安装用的 /Applications 快捷方式
+# Drag-to-install shortcut
 ln -s /Applications "$STAGING/Applications"
-# 授权与使用说明一并放进去
-cp THIRD-PARTY.md "$STAGING/第三方素材授权.md"
-cat > "$STAGING/首次使用请先读我.txt" <<'TXT'
+# Licensing and usage notes ride along
+cp THIRD-PARTY.md "$STAGING/THIRD-PARTY.md"
+cat > "$STAGING/READ ME FIRST.txt" <<'TXT'
+KbSound — installation
+======================
+
+1. Drag KbSound onto the Applications folder on the right.
+
+2. The first launch is blocked by the system (this app is ad-hoc signed and has no
+   developer certificate). Either:
+     · right-click KbSound in Applications → Open → Open again in the dialog, or
+     · run in Terminal:
+         xattr -dr com.apple.quarantine /Applications/KbSound.app
+
+3. There is no Dock icon after launching — look at the right side of the menu bar.
+   Before permission is granted the icon is a crossed-out speaker, meaning no sound.
+
+4. Click that icon → the yellow banner at the top of the panel → follow it to
+   System Settings › Privacy & Security › Accessibility and tick KbSound.
+   No restart needed: about 2 seconds after the grant the icon turns into a keyboard
+   and the app starts working.
+
+The app follows your system language (English and Simplified Chinese).
+
+Where the audio comes from and how it is licensed: see THIRD-PARTY.md.
+The code is MIT licensed; the audio comes from the community and its licensing chain is
+not clear, so please check for yourself before redistributing it.
+
+
 KbSound 安装说明
 ================
 
@@ -43,20 +70,23 @@ KbSound 安装说明
    系统设置 › 隐私与安全性 › 辅助功能 中勾选 KbSound。
    无需重启，授权后约 2 秒图标会自动变成键盘，开始工作。
 
-音效素材的来源与授权情况见「第三方素材授权.md」。
+界面语言跟随系统（英文 / 简体中文）。
+
+音效素材的来源与授权情况见 THIRD-PARTY.md。
 代码采用 MIT 许可；音频部分来自社区，授权链并不清晰，转发前请自行确认。
 TXT
 
-echo "==> 生成 ${DMG}"
-# 用 diskutil 而非 hdiutil：macOS 26 起 `hdiutil create -volname` 已弃用。
-# UDZO 是通用的压缩只读格式，老系统也能打开。
-# 进度条走的是 stderr，正常时不需要看；失败了再把日志全量打出来
+echo "==> Building ${DMG}"
+# diskutil rather than hdiutil: `hdiutil create -volname` is deprecated as of macOS 26.
+# UDZO is the common compressed read-only format that older systems can open too.
+# The progress bar goes to stderr and is not interesting while things work; dump the
+# whole log only on failure.
 LOG="$(mktemp)"
 if ! diskutil image create from \
         --format UDZO \
         --volumeName "$VOLUME_NAME" \
         "$STAGING" "$DMG" > "$LOG" 2>&1; then
-    echo "!! 生成失败：" >&2
+    echo "!! Build failed:" >&2
     cat "$LOG" >&2
     rm -f "$LOG"
     exit 1
@@ -65,4 +95,4 @@ rm -f "$LOG"
 
 rm -rf "$STAGING"
 
-echo "==> 完成：${DMG}  ($(du -h "$DMG" | cut -f1))"
+echo "==> Done: ${DMG}  ($(du -h "$DMG" | cut -f1))"

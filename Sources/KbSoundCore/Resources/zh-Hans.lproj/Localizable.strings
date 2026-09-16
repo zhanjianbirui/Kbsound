@@ -1,0 +1,28 @@
+/* Menu bar */
+"KbSound keyboard sounds" = "KbSound 键盘音效";
+
+/* Status banner */
+"Accessibility permission required" = "需要辅助功能权限";
+"Opens System Settings so you can grant Accessibility permission" = "打开系统设置授予辅助功能权限";
+"Could not start the key listener." = "无法建立按键监听。";
+"No sound pack available." = "没有可用的音效包。";
+"Could not load sound pack: %@" = "音效包加载失败：%@";
+
+/* Controls */
+"Keyboard sounds" = "键盘音效";
+"Keyboard sounds off" = "键盘音效已关闭";
+"Volume" = "音量";
+"Sound packs" = "音效包";
+"Launch at login" = "开机自启";
+"Quit KbSound" = "退出 KbSound";
+
+/* Import */
+"Import sound pack…" = "导入音效包…";
+"Pick a sound pack folder; Mechvibes packs are supported" = "选择一个音效包文件夹，支持 Mechvibes 格式";
+"Import" = "导入";
+"Choose the folder that holds the sound pack (Mechvibes and KbSound formats)" = "选择音效包所在的文件夹（支持 Mechvibes 与 KbSound 格式）";
+"This folder has no manifest.json or config.json, so its format cannot be recognized." = "这个文件夹里没有 manifest.json 或 config.json，无法识别格式。";
+"The sound pack is missing an audio file: %@" = "音效包缺少音频文件：%@";
+"This sound pack does not define any key sounds." = "这个音效包没有定义任何按键音。";
+"Unsupported sound path pattern: %@" = "不支持的音效路径格式：%@";
+"Import failed: %@" = "导入失败：%@";

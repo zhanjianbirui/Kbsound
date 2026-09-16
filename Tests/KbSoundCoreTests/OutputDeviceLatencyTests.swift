@@ -2,7 +2,7 @@ import Testing
 @testable import KbSoundCore
 
 @Test func clampsDesiredSizeIntoDeviceRange() {
-    // 设备只接受 256...4096 时，128 的诉求要抬到 256
+    // When a device only accepts 256...4096, a request for 128 has to be raised to 256
     #expect(OutputDeviceLatency.clamped(128, to: 256...4096) == 256)
 }
 
@@ -15,6 +15,6 @@ import Testing
 }
 
 @Test func preferredSizeIsSmallerThanTypicalDefault() {
-    // 系统默认通常是 512 frames；我们要明显更小才有意义
+    // The system default is usually 512 frames; ours has to be clearly smaller to matter
     #expect(OutputDeviceLatency.preferredFrames < 512)
 }

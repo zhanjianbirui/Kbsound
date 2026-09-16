@@ -2,7 +2,8 @@ import Foundation
 import Testing
 @testable import KbSoundCore
 
-/// 在临时目录里造一个音效包。`files` 是要创建的空占位文件名。
+/// Creates a sound pack in a temporary directory. `files` names the empty placeholder
+/// files to create.
 private func makePack(
     in root: URL,
     dirName: String,
@@ -50,22 +51,22 @@ private func goodManifest(id: String, name: String) -> String {
     let builtIn = try tempDir()
     let user = try tempDir()
     try makePack(in: builtIn, dirName: "alpha",
-                 manifestJSON: goodManifest(id: "com.test.alpha", name: "内置版"),
+                 manifestJSON: goodManifest(id: "com.test.alpha", name: "Built-in edition"),
                  files: ["d.wav"])
     try makePack(in: user, dirName: "alpha",
-                 manifestJSON: goodManifest(id: "com.test.alpha", name: "用户版"),
+                 manifestJSON: goodManifest(id: "com.test.alpha", name: "User edition"),
                  files: ["d.wav"])
 
     let packs = SoundPackLoader(searchPaths: [builtIn, user]).availablePacks()
     #expect(packs.count == 1)
-    #expect(packs[0].name == "用户版")
+    #expect(packs[0].name == "User edition")
 }
 
 @Test func skipsPackWithMissingAudioFile() throws {
     let root = try tempDir()
     try makePack(in: root, dirName: "broken",
                  manifestJSON: goodManifest(id: "com.test.broken", name: "Broken"),
-                 files: [])  // manifest 引用了 d.wav 但文件不存在
+                 files: [])  // the manifest references d.wav but the file does not exist
     try makePack(in: root, dirName: "fine",
                  manifestJSON: goodManifest(id: "com.test.fine", name: "Fine"),
                  files: ["d.wav"])

@@ -3,7 +3,8 @@ import Foundation
 import Observation
 import os
 
-/// 把监听、音频、偏好、权限串起来，作为界面的唯一数据源。
+/// Ties the event tap, audio engine, preferences and permissions together and
+/// acts as the single source of truth for the UI.
 @MainActor
 @Observable
 public final class AppState {
@@ -46,7 +47,7 @@ public final class AppState {
             do {
                 try LoginItem.setEnabled(isLoginItemEnabled)
             } catch {
-                Self.logger.error("开机自启设置失败：\(error.localizedDescription, privacy: .public)")
+                Self.logger.error("Failed to change the login item: \(error.localizedDescription, privacy: .public)")
                 isLoginItemEnabled = LoginItem.isEnabled
             }
         }
@@ -58,7 +59,7 @@ public final class AppState {
     @ObservationIgnored private var tap: KeyEventTap!
     @ObservationIgnored private var loadedPack: LoadedPack?
     @ObservationIgnored private var permissionTimer: Timer?
-    /// 导入的音效包装到这里。为 nil 时界面不显示导入入口。
+    /// Where imported packs are written. When nil, the UI hides the import entry point.
     @ObservationIgnored private let userPacksDirectory: URL?
 
     public init(settings: Settings = Settings(), searchPaths: [URL],
@@ -72,7 +73,7 @@ public final class AppState {
         self.isLoginItemEnabled = LoginItem.isEnabled
 
         self.packs = loader.availablePacks()
-        // 存着的包可能已被删除，回退到第一个可用的
+        // The stored pack may have been deleted; fall back to the first available one.
         if !packs.contains(where: { $0.id == selectedPackID }), let first = packs.first {
             selectedPackID = first.id
         }
@@ -82,7 +83,7 @@ public final class AppState {
         }
     }
 
-    /// 启动监听与音频。界面就绪后调用。
+    /// Starts the event tap and the audio engine. Call once the UI is ready.
     public func start() {
         player.volume = Float(volume)
         loadSelectedPack()
@@ -98,7 +99,8 @@ public final class AppState {
 
     public var canImportPacks: Bool { userPacksDirectory != nil }
 
-    /// 导入一个外部音效包并立刻切换过去。失败时抛出，界面状态保持原样。
+    /// Imports an external sound pack and switches to it. On failure it throws and
+    /// the UI state is left untouched.
     public func importPack(from source: URL) throws {
         guard let userPacksDirectory else { throw PackImporter.ImportError.unrecognizedFormat }
         let ref = try PackImporter.importPack(from: source, into: userPacksDirectory)
@@ -106,7 +108,8 @@ public final class AppState {
         selectedPackID = ref.id
     }
 
-    /// 用户点击提示条时弹出系统授权对话框并打开设置面板。
+    /// Shows the system permission prompt and opens the settings pane when the user
+    /// taps the banner.
     public func requestAccessibility() {
         AccessibilityPermission.requestWithPrompt()
         AccessibilityPermission.openSystemSettings()
@@ -119,7 +122,7 @@ public final class AppState {
 
     private func startTap() {
         guard AccessibilityPermission.isTrusted else {
-            Self.logger.info("尚无辅助功能权限，面板显示提示条并开始轮询")
+            Self.logger.info("No Accessibility permission yet; showing the banner and polling")
             status = .needsAccessibility
             startPollingForPermission()
             return
@@ -127,11 +130,12 @@ public final class AppState {
         if tap.start() {
             status = .ok
         } else {
-            status = .failed("无法建立按键监听")
+            status = .failed(loc("Could not start the key listener."))
         }
     }
 
-    /// 没权限时每 2 秒查一次；一旦拿到就停掉定时器并自动启动。
+    /// Polls every 2 seconds while permission is missing; stops the timer and starts
+    /// automatically as soon as the grant lands.
     private func startPollingForPermission() {
         guard permissionTimer == nil else { return }
         permissionTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
@@ -147,7 +151,7 @@ public final class AppState {
     private func loadSelectedPack() {
         guard let ref = packs.first(where: { $0.id == selectedPackID }) else {
             loadedPack = nil
-            status = .failed("没有可用的音效包")
+            status = .failed(loc("No sound pack available."))
             return
         }
         do {
@@ -156,9 +160,9 @@ public final class AppState {
             loadedPack = pack
             if case .failed = status { status = .ok }
         } catch {
-            Self.logger.error("加载音效包 \(ref.id, privacy: .public) 失败：\(error.localizedDescription, privacy: .public)")
+            Self.logger.error("Failed to load sound pack \(ref.id, privacy: .public): \(error.localizedDescription, privacy: .public)")
             loadedPack = nil
-            status = .failed("音效包加载失败：\(ref.name)")
+            status = .failed(loc("Could not load sound pack: \(ref.name)"))
         }
     }
 }

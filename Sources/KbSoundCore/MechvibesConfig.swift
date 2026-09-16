@@ -1,12 +1,13 @@
 import Foundation
 
-/// Mechvibes 音效包的 `config.json`。
+/// The `config.json` of a Mechvibes sound pack.
 ///
-/// 有两种排布方式，靠 `key_define_type` 区分：
-/// - `multi`：每个音一个文件，`defines` 的值是文件路径
-/// - `single`：整包一个音频「精灵」，`defines` 的值是 `[起始毫秒, 时长毫秒]`
+/// Two layouts exist, distinguished by `key_define_type`:
+/// - `multi`: one file per sound, `defines` values are file paths
+/// - `single`: one audio sprite for the whole pack, `defines` values are
+///   `[offset ms, duration ms]`
 ///
-/// 网上流传的社区包大多是 `single`。
+/// Most community packs found online are `single`.
 public struct MechvibesConfig: Decodable {
     public struct Slice: Equatable {
         public let offsetMs: Double
@@ -20,7 +21,8 @@ public struct MechvibesConfig: Decodable {
 
     public let id: String
     public let name: String
-    /// `multi` 下可能是 `GENERIC_R{0-4}.mp3` 这样的行模式；`single` 下是精灵文件名。
+    /// Under `multi` this can be a row pattern such as `GENERIC_R{0-4}.mp3`; under
+    /// `single` it is the sprite's file name.
     public let sound: String
     public let soundup: String?
     public let layout: Layout
@@ -43,12 +45,12 @@ public struct MechvibesConfig: Decodable {
 
         switch try container.decode(String.self, forKey: .keyDefineType) {
         case "multi":
-            // 未定义的键会写成 null，可选解码把它们自然跳过
+            // Undefined keys are written as null; optional decoding skips them naturally.
             let raw = try container.decodeIfPresent(
                 [String: String?].self, forKey: .defines) ?? [:]
             layout = .multi(defines: raw.compactMapValues { $0 })
         case "single":
-            // 未定义的键会写成 null，可选解码把它们自然跳过
+            // Undefined keys are written as null; optional decoding skips them naturally.
             let raw = try container.decodeIfPresent(
                 [String: [Double]?].self, forKey: .defines) ?? [:]
             var slices: [String: Slice] = [:]
@@ -62,7 +64,8 @@ public struct MechvibesConfig: Decodable {
         }
     }
 
-    /// `press/GENERIC_R{0-4}.mp3` → 行号到文件名的映射；不是行模式时返回 nil。
+    /// `press/GENERIC_R{0-4}.mp3` → row number to file name. Returns nil when the
+    /// string is not a row pattern.
     public static func expandRowPattern(_ pattern: String) -> [Int: String]? {
         guard let range = pattern.range(of: #"R\{(\d+)-(\d+)\}"#, options: .regularExpression)
         else { return nil }

@@ -1,10 +1,12 @@
 @testable import KbSoundCore
 
-/// 纯内存的 `SettingsStore`，让每个测试完全隔离且不碰磁盘。
+/// A purely in-memory `SettingsStore`, so every test is isolated and never touches disk.
 ///
-/// 曾经用过独立的 `UserDefaults` suite，但两种写法都有问题：可复用的递增套件名会让
-/// 上一轮的脏数据在冷启动时被读到（`defaultsAreSensible` 随机失败），而唯一套件名
-/// 即便清空了数据，cfprefsd 仍会在 `~/Library/Preferences` 留下空 plist 文件。
+/// A separate `UserDefaults` suite was tried first, but both spellings have problems: a
+/// reusable incrementing suite name lets the previous run's dirty data be read back on a
+/// cold start (`defaultsAreSensible` failed at random), while a unique suite name still
+/// leaves an empty plist in `~/Library/Preferences` via cfprefsd even after the data is
+/// cleared.
 final class InMemoryStore: SettingsStore {
     private var values: [String: Any] = [:]
     private var registered: [String: Any] = [:]
@@ -17,7 +19,7 @@ final class InMemoryStore: SettingsStore {
         if let value { values[key] = value } else { values.removeValue(forKey: key) }
     }
 
-    /// 与 `UserDefaults.register` 语义一致：只在没有显式写入时兜底。
+    /// Matches `UserDefaults.register`: only fills in when nothing was written explicitly.
     func register(defaults registrationDictionary: [String: Any]) {
         registered.merge(registrationDictionary) { current, _ in current }
     }

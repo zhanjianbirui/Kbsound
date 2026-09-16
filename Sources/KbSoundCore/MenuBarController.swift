@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 import os
 
-/// 菜单栏图标 + 点击弹出的 popover。
+/// The menu bar icon and the popover it opens.
 @MainActor
 public final class MenuBarController {
     private static let logger = Logger(subsystem: "com.kbsound", category: "MenuBar")
@@ -18,16 +18,18 @@ public final class MenuBarController {
     public func install() {
         popover.behavior = .transient
         let content = PopoverView(state: state) { [popover] work in
-            // 模态面板期间改成 applicationDefined，结束后恢复，
-            // 否则 NSOpenPanel 一弹出 popover 就自己关了
+            // Switch to applicationDefined for the duration of the modal panel and
+            // restore afterwards; otherwise the popover closes itself the moment the
+            // NSOpenPanel appears.
             let previous = popover.behavior
             popover.behavior = .applicationDefined
             defer { popover.behavior = previous }
             work()
         }
         let hosting = NSHostingController(rootView: content)
-        // 不设这个的话 NSHostingController 不会把 SwiftUI 的理想尺寸传给 popover，
-        // popover 会按一个偏小的默认值显示，面板下半截被裁掉。
+        // Without this, NSHostingController never passes SwiftUI's ideal size on to the
+        // popover, which then uses a too-small default and clips the bottom half of the
+        // panel.
         hosting.sizingOptions = [.preferredContentSize]
         popover.contentViewController = hosting
 
@@ -35,9 +37,9 @@ public final class MenuBarController {
         item.button?.image = MenuBarIcon.image(active: state.isEnabled)
         item.button?.target = self
         item.button?.action = #selector(togglePopover)
-        item.button?.setAccessibilityLabel("KbSound 键盘音效")
+        item.button?.setAccessibilityLabel(loc("KbSound keyboard sounds"))
         statusItem = item
-        Self.logger.info("菜单栏项已安装")
+        Self.logger.info("Status item installed")
     }
 
     public func refreshIcon() {
@@ -47,7 +49,7 @@ public final class MenuBarController {
 
     @objc private func togglePopover() {
         guard let button = statusItem?.button else {
-            Self.logger.error("statusItem.button 为 nil")
+            Self.logger.error("statusItem.button is nil")
             return
         }
         if popover.isShown {

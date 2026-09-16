@@ -1,44 +1,52 @@
-# 第三方素材
+# Third-party assets
 
-## 音效包
+## Sound packs
 
-`Resources/Packs/` 下共 21 套音效包，来自两处。
+The 21 packs under `Resources/Packs/` come from two places.
 
-### 15 套：klinkmac
+### 15 packs: klinkmac
 
-取自 [klinkmac](https://github.com/rockykusuma/klinkmac)（仓库采用 MIT 许可）。
+Taken from [klinkmac](https://github.com/rockykusuma/klinkmac) (the repository is MIT
+licensed).
 
-音频文件本身在各包 `manifest.json` 中标注的 `author` 为
-"Mechvibes Community"，`license` 未标注或为 `unknown`。
+In each pack's `manifest.json` the audio files themselves are attributed to
+"Mechvibes Community", with `license` either absent or `unknown`.
 
-### 6 套：mechvibes / kbsim
+### 6 packs: mechvibes / kbsim
 
-`holy-pandas`、`turquoise`、`cream-travel`、`mxblack-travel`、`mxblue-travel`、
-`mxbrown-travel` 取自 [mechvibes](https://github.com/hainguyents13/mechvibes)（MIT）
-的 `src/audio/`，其 `holy-pandas/README.md` 注明音频来自
-[tplai/kbsim](https://github.com/tplai/kbsim)（MIT），
-`holy-pandas/LICENSE` 为 Thomas Lai 署名的 MIT 文本。
+`holy-pandas`, `turquoise`, `cream-travel`, `mxblack-travel`, `mxblue-travel` and
+`mxbrown-travel` come from `src/audio/` of
+[mechvibes](https://github.com/hainguyents13/mechvibes) (MIT). Its
+`holy-pandas/README.md` states that the audio comes from
+[tplai/kbsim](https://github.com/tplai/kbsim) (MIT), and `holy-pandas/LICENSE` is an MIT
+text attributed to Thomas Lai.
 
-这 6 套的授权链比上面 15 套清晰，但**其余 5 套目录内没有独立的 LICENSE 文件**，
-只能依据同源仓库的 MIT 许可推定。
+The licensing chain for these 6 is clearer than for the 15 above, but **the other 5
+directories carry no LICENSE file of their own** — their status can only be inferred from
+the MIT license of the repository they came from.
 
-原始格式是 Mechvibes 的 `config.json`（Linux/X11 键码），
-已由 `scripts/import-mechvibes.py` 转换为本项目的 manifest 格式（macOS 虚拟键码）。
+The original format is Mechvibes' `config.json` (Linux/X11 key codes); they were
+converted to this project's manifest format (macOS virtual key codes) by
+`scripts/import-mechvibes.py`.
 
-### 分发说明
+### On redistribution
 
-代码部分采用 MIT 许可（见 `LICENSE`），**不覆盖 `Resources/Packs/` 下的音频文件**。
+The code is MIT licensed (see `LICENSE`). That license **does not cover the audio files
+under `Resources/Packs/`**.
 
-上述 15 套音频的授权链并不清晰：上游 klinkmac 仓库本身是 MIT，但音频文件在
-manifest 中标注的 `author` 为 "Mechvibes Community"、`license` 为 unknown，
-无从追溯到原始录制者。本仓库保留原始出处标注、不主张对这些音频的任何权利。
-**若你是其中某段录音的权利人并希望移除，请开 issue，会立即撤下。**
+The licensing chain for the 15 klinkmac packs is not clear: the upstream repository is
+MIT, but the audio files are attributed in their manifests to "Mechvibes Community" with
+an `unknown` license, and the original recordists cannot be traced. This repository keeps
+the original attributions and claims no rights over the audio.
+**If you own one of these recordings and want it removed, open an issue and it will be
+taken down immediately.**
 
-以此为前提：转发或再分发这些音频前请自行确认其授权状况；
-本仓库不对音频部分提供任何授权担保。
+On that basis: check the licensing status yourself before forwarding or redistributing
+this audio. This repository offers no warranty of any kind for the audio.
 
-## Claude Code Skills
+## Claude Code skills
 
-`.claude/skills/` 下的 6 个 skill 取自
-[rshankras/claude-code-apple-skills](https://github.com/rshankras/claude-code-apple-skills)（MIT），
-仅复制了本项目相关的子集，未做修改。完整授权见 `.claude/skills/LICENSE-apple-skills`。
+The 6 skills under `.claude/skills/` are taken from
+[rshankras/claude-code-apple-skills](https://github.com/rshankras/claude-code-apple-skills)
+(MIT). Only the subset relevant to this project was copied, unmodified. The full license
+is in `.claude/skills/LICENSE-apple-skills`.

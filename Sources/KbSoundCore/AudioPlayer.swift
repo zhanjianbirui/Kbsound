@@ -2,9 +2,10 @@ import AVFoundation
 import Foundation
 import os
 
-/// AVAudioEngine + 固定大小的播放节点池。
+/// `AVAudioEngine` plus a fixed-size pool of player nodes.
 ///
-/// 全部在主线程使用：CGEventTap 的回调挂在主 run loop 上。
+/// Used entirely from the main thread: the `CGEventTap` callback runs on the main
+/// run loop.
 @MainActor
 public final class AudioPlayer {
     private static let logger = Logger(subsystem: "com.kbsound", category: "Audio")
@@ -16,7 +17,7 @@ public final class AudioPlayer {
     private var storedVolume: Float = 0.5
     private var configObserver: (any NSObjectProtocol)?
 
-    /// 重连次数，仅供测试断言 prepare 的幂等性。
+    /// Number of reconnects, used only by tests to assert that `prepare` is idempotent.
     private(set) var reconnectCount = 0
 
     public init(nodeCount: Int = 16) {
@@ -32,15 +33,15 @@ public final class AudioPlayer {
         }
     }
 
-    /// `isolated deinit`：观察者是非 Sendable 的，nonisolated deinit 在 Swift 6
-    /// 严格并发下不允许访问它。
+    /// `isolated deinit`: the observer is non-Sendable, and a nonisolated deinit is
+    /// not allowed to touch it under Swift 6 strict concurrency.
     isolated deinit {
         if let configObserver {
             NotificationCenter.default.removeObserver(configObserver)
         }
     }
 
-    /// 音量，钳制到 0...1。跨重连保留。
+    /// Volume, clamped to 0...1. Preserved across reconnects.
     public var volume: Float {
         get { storedVolume }
         set {
@@ -49,7 +50,8 @@ public final class AudioPlayer {
         }
     }
 
-    /// 让引擎准备好播放该格式的 buffer。格式未变时是空操作。
+    /// Gets the engine ready to play buffers in this format. A no-op when the format
+    /// has not changed.
     public func prepare(format: AVAudioFormat) throws {
         guard currentFormat != format else { return }
 
@@ -63,8 +65,9 @@ public final class AudioPlayer {
             engine.connect(node, to: engine.mainMixerNode, format: format)
         }
 
-        // 必须在 start 之前：buffer 大小决定播放调度的量化粒度，
-        // 也是按键到出声那段间隔的主要来源。设备切换后本方法会被重新调用。
+        // Must happen before start: the buffer size sets the quantization of playback
+        // scheduling and is the main contributor to the gap between key and sound.
+        // This method runs again after a device change.
         OutputDeviceLatency.minimize()
 
         engine.prepare()
@@ -74,10 +77,10 @@ public final class AudioPlayer {
         engine.mainMixerNode.outputVolume = storedVolume
         currentFormat = format
         reconnectCount += 1
-        Self.logger.info("引擎已就绪 \(format.sampleRate, privacy: .public)Hz \(format.channelCount, privacy: .public)ch")
+        Self.logger.info("Engine ready at \(format.sampleRate, privacy: .public)Hz \(format.channelCount, privacy: .public)ch")
     }
 
-    /// 播放一声。轮转节点，让连打时前后两声能重叠。
+    /// Plays one sound. Nodes rotate so consecutive keystrokes can overlap.
     public func play(_ buffer: AVAudioPCMBuffer) {
         guard engine.isRunning else { return }
         let node = nodes[nextNode]
@@ -91,15 +94,16 @@ public final class AudioPlayer {
         currentFormat = nil
     }
 
-    /// 插拔耳机、切换输出设备后引擎会失效，用当前格式重建。
+    /// The engine is invalidated when headphones are plugged in or the output device
+    /// changes; rebuild it with the current format.
     private func handleConfigurationChange() {
         guard let format = currentFormat else { return }
-        Self.logger.info("音频设备变化，重建引擎")
+        Self.logger.info("Audio device changed, rebuilding the engine")
         currentFormat = nil
         do {
             try prepare(format: format)
         } catch {
-            Self.logger.error("重建引擎失败：\(error.localizedDescription, privacy: .public)")
+            Self.logger.error("Failed to rebuild the engine: \(error.localizedDescription, privacy: .public)")
         }
     }
 }

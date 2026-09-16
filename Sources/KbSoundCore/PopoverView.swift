@@ -1,17 +1,19 @@
 import SwiftUI
 
-/// 菜单栏 popover 的内容。
+/// Contents of the menu bar popover.
 ///
-/// 注意：不要在这里用 `.glassEffect()`——NSPopover 自身已是导航层材质，
-/// 叠加会构成 "glass on glass"。层次靠填充色和间距表达。
+/// Note: do not use `.glassEffect()` here — an NSPopover is already a navigation-layer
+/// material, and stacking would make it "glass on glass". Hierarchy is carried by fill
+/// colors and spacing instead.
 public struct PopoverView: View {
     @Bindable private var state: AppState
 
-    /// 导入失败时显示的提示，成功后清空。
+    /// Message shown when an import fails; cleared on success.
     @State private var importError: String?
 
-    /// 在模态面板期间固定住 popover。popover 是 transient，
-    /// 弹 NSOpenPanel 时会失焦自动关闭，用户就看不到结果了。
+    /// Pins the popover open for the duration of a modal panel. The popover is
+    /// transient, so presenting an NSOpenPanel makes it lose focus and close itself,
+    /// leaving the user unable to see the result.
     private let keepingOpen: (() -> Void) -> Void
 
     public init(state: AppState, keepingOpen: @escaping (() -> Void) -> Void = { $0() }) {
@@ -42,14 +44,15 @@ public struct PopoverView: View {
             Button {
                 state.requestAccessibility()
             } label: {
-                Label("需要辅助功能权限", systemImage: "exclamationmark.triangle.fill")
+                Label(loc("Accessibility permission required"),
+                      systemImage: "exclamationmark.triangle.fill")
                     .font(.callout)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(8)
                     .background(.yellow.opacity(0.15), in: .rect(cornerRadius: 8))
             }
             .buttonStyle(.plain)
-            .accessibilityHint("打开系统设置授予辅助功能权限")
+            .accessibilityHint(loc("Opens System Settings so you can grant Accessibility permission"))
         case .failed(let message):
             Label(message, systemImage: "xmark.octagon.fill")
                 .font(.callout)
@@ -61,7 +64,7 @@ public struct PopoverView: View {
     }
 
     private var enableToggle: some View {
-        Toggle("键盘音效", isOn: $state.isEnabled)
+        Toggle(loc("Keyboard sounds"), isOn: $state.isEnabled)
             .toggleStyle(.switch)
             .font(.headline)
     }
@@ -71,7 +74,7 @@ public struct PopoverView: View {
             Image(systemName: "speaker.fill")
                 .foregroundStyle(.secondary)
             Slider(value: $state.volume, in: 0...1)
-                .accessibilityLabel("音量")
+                .accessibilityLabel(loc("Volume"))
             Image(systemName: "speaker.wave.3.fill")
                 .foregroundStyle(.secondary)
         }
@@ -81,7 +84,7 @@ public struct PopoverView: View {
 
     private var packList: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("音效包")
+            Text(loc("Sound packs"))
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
@@ -106,17 +109,18 @@ public struct PopoverView: View {
         }
     }
 
-    /// 导入不是主操作，保持中性——tint 留给选中的音效包和总开关。
+    /// Importing is not the primary action, so it stays neutral — tint belongs to the
+    /// selected pack and the main switch.
     private var importButton: some View {
         Button {
             importPack()
         } label: {
-            Label("导入音效包…", systemImage: "plus")
+            Label(loc("Import sound pack…"), systemImage: "plus")
                 .font(.callout)
         }
         .buttonStyle(.plain)
         .foregroundStyle(.secondary)
-        .accessibilityHint("选择一个音效包文件夹，支持 Mechvibes 格式")
+        .accessibilityHint(loc("Pick a sound pack folder; Mechvibes packs are supported"))
     }
 
     private func importPack() {
@@ -128,8 +132,8 @@ public struct PopoverView: View {
         panel.canChooseDirectories = true
         panel.canChooseFiles = false
         panel.allowsMultipleSelection = false
-        panel.prompt = "导入"
-        panel.message = "选择音效包所在的文件夹（支持 Mechvibes 与 KbSound 格式）"
+        panel.prompt = loc("Import")
+        panel.message = loc("Choose the folder that holds the sound pack (Mechvibes and KbSound formats)")
         guard panel.runModal() == .OK, let url = panel.url else { return }
 
         do {
@@ -143,15 +147,15 @@ public struct PopoverView: View {
     private func message(for error: any Error) -> String {
         switch error {
         case PackImporter.ImportError.unrecognizedFormat:
-            "这个文件夹里没有 manifest.json 或 config.json，无法识别格式。"
+            loc("This folder has no manifest.json or config.json, so its format cannot be recognized.")
         case PackImporter.ImportError.missingAudio(let file):
-            "音效包缺少音频文件：\(file)"
+            loc("The sound pack is missing an audio file: \(file)")
         case PackImporter.ImportError.noKeysDefined:
-            "这个音效包没有定义任何按键音。"
+            loc("This sound pack does not define any key sounds.")
         case PackImporter.ImportError.unsupportedSoundPattern(let pattern):
-            "不支持的音效路径格式：\(pattern)"
+            loc("Unsupported sound path pattern: \(pattern)")
         default:
-            "导入失败：\(error.localizedDescription)"
+            loc("Import failed: \(error.localizedDescription)")
         }
     }
 
@@ -182,11 +186,11 @@ public struct PopoverView: View {
 
     private var footer: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Toggle("开机自启", isOn: $state.isLoginItemEnabled)
+            Toggle(loc("Launch at login"), isOn: $state.isLoginItemEnabled)
                 .toggleStyle(.switch)
                 .font(.callout)
 
-            Button("退出 KbSound") {
+            Button(loc("Quit KbSound")) {
                 NSApplication.shared.terminate(nil)
             }
             .buttonStyle(.plain)

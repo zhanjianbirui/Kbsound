@@ -2,14 +2,15 @@ import Cocoa
 import CoreAudio
 import Darwin
 
-// 实时反馈用，关掉 stdout 缓冲
+// Live feedback, so turn stdout buffering off.
 setbuf(stdout, nil)
 
-// 顶层代码默认是 MainActor 隔离的，但 C 回调里要读它，所以显式标为 nonisolated
+// Top-level code is MainActor-isolated by default, but the C callback reads this, so
+// it is marked nonisolated explicitly.
 nonisolated(unsafe) var timebase = mach_timebase_info_data_t()
 mach_timebase_info(&timebase)
 
-/// mach 时钟刻度 → 毫秒
+/// mach ticks → milliseconds
 func ms(fromTicks ticks: UInt64) -> Double {
     Double(ticks) * Double(timebase.numer) / Double(timebase.denom) / 1_000_000
 }
@@ -32,7 +33,7 @@ func outputDeviceBufferFrames() -> UInt32 {
 }
 
 guard AXIsProcessTrusted() else {
-    print("❌ 无辅助功能权限。请到 系统设置 > 隐私与安全性 > 辅助功能 勾选运行本程序的终端，然后重试。")
+    print("❌ No Accessibility permission. Tick the terminal running this program in System Settings › Privacy & Security › Accessibility, then try again.")
     exit(1)
 }
 
@@ -43,15 +44,16 @@ let callback: CGEventTapCallBack = { _, type, event, _ in
           event.getIntegerValueField(.keyboardEventAutorepeat) == 0 else {
         return Unmanaged.passUnretained(event)
     }
-    // CGEvent.timestamp 是事件产生时的 mach 绝对时间；与此刻之差即投递延迟
+    // CGEvent.timestamp is the mach absolute time the event was created; the difference
+    // from now is the delivery latency.
     let delivery = ms(fromTicks: mach_absolute_time() &- event.timestamp)
     samples.append(delivery)
     let code = event.getIntegerValueField(.keyboardEventKeycode)
-    print(String(format: "↓ keyCode=%-4d 事件投递 %6.2f ms", code, delivery))
+    print(String(format: "↓ keyCode=%-4d delivery %6.2f ms", code, delivery))
 
     if samples.count % 10 == 0 {
         let sorted = samples.sorted()
-        print(String(format: "   ── 已采 %d 次：中位 %.2f ms，P90 %.2f ms，设备 buffer %d frames",
+        print(String(format: "   ── %d samples: median %.2f ms, P90 %.2f ms, device buffer %d frames",
                      sorted.count, sorted[sorted.count / 2],
                      sorted[min(sorted.count - 1, sorted.count * 9 / 10)],
                      outputDeviceBufferFrames()))
@@ -64,7 +66,7 @@ guard let tap = CGEvent.tapCreate(
     tap: .cghidEventTap, place: .headInsertEventTap, options: .listenOnly,
     eventsOfInterest: CGEventMask(mask), callback: callback, userInfo: nil
 ) else {
-    print("❌ CGEvent.tapCreate 返回 nil")
+    print("❌ CGEvent.tapCreate returned nil")
     exit(1)
 }
 
@@ -72,6 +74,6 @@ let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
 CFRunLoopAddSource(CFRunLoopGetCurrent(), source, .commonModes)
 CGEvent.tapEnable(tap: tap, enable: true)
 
-print("设备 buffer: \(outputDeviceBufferFrames()) frames")
-print("✅ 开始敲键盘（至少 20 下），Ctrl+C 退出。\n")
+print("Device buffer: \(outputDeviceBufferFrames()) frames")
+print("✅ Start typing (at least 20 keys); Ctrl+C to quit.\n")
 CFRunLoopRun()

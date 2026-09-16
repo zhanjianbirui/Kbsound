@@ -12,7 +12,7 @@ private let fullJSON = """
   "id": "com.test.full",
   "name": "Full Pack",
   "author": "Tester",
-  "description": "有 up 也有 down",
+  "description": "has both up and down",
   "defaults": { "down": "default-down.wav", "up": "default-up.wav" },
   "keys": {
     "49": { "down": "space-down.wav", "up": "space-up.wav" },
@@ -27,7 +27,7 @@ private let fullJSON = """
     #expect(m.id == "com.test.full")
     #expect(m.name == "Full Pack")
     #expect(m.author == "Tester")
-    #expect(m.detail == "有 up 也有 down")
+    #expect(m.detail == "has both up and down")
 }
 
 @Test func specificKeyWinsOverDefaults() throws {
@@ -43,14 +43,14 @@ private let fullJSON = """
 }
 
 @Test func fallsBackToDefaultsWhenPhaseMissingOnKey() throws {
-    // keyCode 51 只定义了 down，up 应回退到 defaults
+    // keyCode 51 only defines down, so up falls back to defaults
     let m = try decode(fullJSON)
     #expect(m.fileName(for: 51, phase: .down) == "backspace-down.wav")
     #expect(m.fileName(for: 51, phase: .up) == "default-up.wav")
 }
 
 @Test func returnsNilWhenNoSoundAnywhere() throws {
-    // 只有 down 的包（多数真实包如此），up 应返回 nil 而不是崩溃
+    // A down-only pack (most real packs) should return nil for up rather than crash
     let m = try decode("""
     {
       "formatVersion": 1, "id": "com.test.downonly", "name": "Down Only",
@@ -82,7 +82,7 @@ private let fullJSON = """
 }
 
 @Test func missingRequiredFieldThrows() {
-    // 缺 defaults —— 必填，应当解码失败而不是给出半个包
+    // Missing defaults — it is required, so decoding must fail rather than yield half a pack
     #expect(throws: (any Error).self) {
         try decode("""
         { "formatVersion": 1, "id": "com.test.bad", "name": "Bad" }

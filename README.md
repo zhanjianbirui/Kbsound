@@ -2,21 +2,22 @@
 
 A tiny macOS menu bar app that plays mechanical keyboard sounds as you type.
 
-一个 macOS 菜单栏小工具：敲键盘时播放机械键盘音效。
+**English** · [简体中文](README.zh-CN.md)
 
 ![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black)
 ![Swift 6](https://img.shields.io/badge/Swift-6-orange)
-![Tests](https://img.shields.io/badge/tests-111%20passing-brightgreen)
+![Tests](https://img.shields.io/badge/tests-113%20passing-brightgreen)
 
 - **21 built-in sound packs**, switchable from the menu bar
 - **Loudness-normalized** — every pack lands at the same perceived volume
 - **Low latency** — lead-in trimming and a small IO buffer keep key-to-sound tight
 - **Imports Mechvibes packs** — drop in any community pack folder
+- **English and Simplified Chinese UI**, following the system language
 - No network access, no telemetry, ~7 MB of audio, negligible CPU
 
 ---
 
-## Install / 安装
+## Install
 
 Build a DMG (recommended if you install on more than one machine):
 
@@ -40,35 +41,28 @@ open /Applications/KbSound.app
 > Ad-hoc signatures identify the binary by its code hash, so **every rebuild
 > invalidates the existing Accessibility grant.** Remove the stale entry in System
 > Settings and tick the new one.
->
-> 中文：本 app 使用 ad-hoc 签名，在别的机器上首次打开会被 Gatekeeper 拦下，
-> 需右键点「打开」或执行上面的 `xattr` 命令。每次重新打包都会让已有的辅助功能授权失效。
 
 On first run, enable KbSound in **System Settings › Privacy & Security › Accessibility**.
 No restart needed — the app polls every 2 seconds and starts working as soon as the
 grant lands.
 
-首次运行需要在 **系统设置 › 隐私与安全性 › 辅助功能** 中勾选 KbSound，授权后无需重启。
-
 > It must run as a packaged `.app`. Accessibility permission is granted per bundle
 > identifier; under `swift run` the grant would go to your terminal, and Login Item
 > support is unavailable.
->
-> 必须以打包好的 `.app` 运行——用 `swift run` 跑的话授权对象是终端，且开机自启不可用。
 
-## Usage / 使用
+## Usage
 
 Click the keyboard icon in the menu bar:
 
-| Control | 说明 |
+| Control | What it does |
 |---|---|
-| **Keyboard sounds** | 总开关。关闭或未授权时图标变为喇叭划线 |
-| **Volume** | 音量，实时生效 |
-| **Sound pack** | 音效包，内置 21 套，点击即切换 |
-| **Import sound pack…** | 导入外部音效包，见下 |
-| **Launch at login** | 开机自启，以系统的登录项状态为准 |
+| **Keyboard sounds** | Main switch. The icon turns into a crossed-out speaker when it is off or unauthorized. |
+| **Volume** | Takes effect immediately. |
+| **Sound packs** | 21 built in; click one to switch. |
+| **Import sound pack…** | Imports an external pack; see below. |
+| **Launch at login** | Follows the system's login item state. |
 
-## Loudness normalization / 响度归一
+## Loudness normalization
 
 Community packs are recorded at wildly different levels — across the 21 bundled
 packs the onset RMS spans **23.7 dB** (`topre-silent` at −16.6 dBFS, `lofi` at
@@ -99,16 +93,11 @@ Files are also weighted by how many keys reference them — what a pack *sounds 
 while typing is set by the default sound covering most keys, not by the one mapped
 only to the spacebar.
 
-中文：21 套内置包的录制电平跨度达 23.7dB，切包时音量忽大忽小。加载时按整包算一个
-增益拉齐，残差收敛到 2.9dB；目标电平取 −34dBFS，使增益中位数约为 0dB——
-归一只拉齐、不改变整体音量。取舍见上面四点，实现在
-`LoudnessNormalizer.swift`，由 `LoudnessNormalizerTests.swift` 的真实数据测试守住。
-
-## Sound packs / 音效包
+## Sound packs
 
 21 packs ship with the app. Sources and licensing are in [`THIRD-PARTY.md`](THIRD-PARTY.md).
 
-### Importing an existing pack / 导入现成的包
+### Importing an existing pack
 
 Click **Import sound pack…** and pick the pack's **folder**. Three formats are
 auto-detected:
@@ -125,13 +114,10 @@ wav / mp3 / m4a / flac / Ogg Vorbis / Opus natively, so no transcoding is needed
 Imported packs land in `~/Library/Application Support/KbSound/Packs/<pack-id>/`.
 A matching id shadows a built-in pack; re-importing replaces rather than stacks.
 
-网上流传的 Mechvibes 包基本都能直接导入，无需事先转码。导入的包装在
-`~/Library/Application Support/KbSound/Packs/` 下，同 id 会覆盖内置包。
-
-### Writing one by hand / 手写一个包
+### Writing one by hand
 
 Drop a directory with a valid `manifest.json` into the same location. The schema is
-in section 4 of `docs/superpowers/specs/2026-09-10-kb-sound-design.md`.
+documented in [`docs/sound-pack-format.md`](docs/sound-pack-format.md).
 
 To batch-convert Mechvibes packs from the command line:
 
@@ -139,7 +125,7 @@ To batch-convert Mechvibes packs from the command line:
 python3 scripts/import-mechvibes.py <mechvibes src/audio dir> <output dir>
 ```
 
-## About latency / 关于延迟
+## About latency
 
 Key-to-sound latency comes from three places; the first two are handled in code:
 
@@ -160,13 +146,10 @@ To measure key event delivery on your own machine:
 swift run LatencyProbe
 ```
 
-中文：延迟主要来自音效文件的前导段（影响最大，加载时已裁掉）、输出设备 IO buffer
-（已调小到 128 frames）和音效包本身的录音风格。
-
-## Development / 开发
+## Development
 
 ```sh
-swift build && swift test      # build + unit tests (111)
+swift build && swift test      # build + unit tests (113)
 swift run TapProbe             # verify CGEventTap works
 swift run LatencyProbe         # measure key event delivery latency
 swift run KbSound              # dev run (from the repo root; no Login Item support)
@@ -178,7 +161,12 @@ AppKit/SwiftUI shell around it. Sound packs are decoded to resident PCM buffers 
 switch, so the key callback does nothing but a dictionary lookup; no file I/O ever
 happens on the hot path.
 
-## License / 授权
+UI strings live in `Sources/KbSoundCore/Resources/<locale>.lproj/Localizable.strings`
+and are resolved through the `loc(_:)` helper in `Localization.swift`. To add a language,
+add an `.lproj` directory and list the locale in `CFBundleLocalizations` in
+`scripts/bundle.sh`.
+
+## License
 
 Code is released under the MIT License (see [`LICENSE`](LICENSE)).
 
@@ -188,5 +176,3 @@ Bundled audio is **not** covered by that license. It comes from
 [kbsim](https://github.com/tplai/kbsim); provenance and the limits of what is known
 about each pack's licensing are documented in [`THIRD-PARTY.md`](THIRD-PARTY.md).
 If you own one of these recordings and want it removed, open an issue.
-
-代码采用 MIT 许可。内置音频不在此列，来源与授权情况见 `THIRD-PARTY.md`。

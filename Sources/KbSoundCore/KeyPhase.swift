@@ -1,4 +1,4 @@
-/// 一次按键事件的两个阶段。
+/// The two phases of a key event.
 public enum KeyPhase: Sendable, Equatable {
     case down
     case up

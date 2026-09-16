@@ -1,25 +1,27 @@
 import ApplicationServices
 import Cocoa
 
-/// 辅助功能权限——没有它就无法建立 CGEventTap。
+/// Accessibility permission — without it a `CGEventTap` cannot be created.
 ///
-/// 权限是按 bundle identifier 授予的，所以必须以打包好的 .app 运行，
-/// 否则每次重新编译都要重新授权。
+/// The grant is keyed by bundle identifier, so the app has to run as a packaged
+/// `.app`; otherwise every rebuild would need a fresh authorization.
 public enum AccessibilityPermission {
     public static var isTrusted: Bool {
         AXIsProcessTrusted()
     }
 
-    /// 这里不用 `kAXTrustedCheckOptionPrompt`：它是导入的全局 `var`，在 Swift 6
-    /// 严格并发下被判为共享可变状态而无法引用。字面值已用运行时打印核对过。
+    /// `kAXTrustedCheckOptionPrompt` is not used here: it is an imported global `var`,
+    /// which Swift 6 strict concurrency treats as shared mutable state and refuses to
+    /// reference. The literal below was verified against it at runtime.
     private static let promptOptionKey = "AXTrustedCheckOptionPrompt"
 
-    /// 弹出系统的授权提示。只在用户主动点击时调用，别在启动时骚扰。
+    /// Shows the system permission prompt. Only call this on an explicit user action —
+    /// never nag at launch.
     public static func requestWithPrompt() {
         _ = AXIsProcessTrustedWithOptions([promptOptionKey: true] as CFDictionary)
     }
 
-    /// 直接打开 系统设置 > 隐私与安全性 > 辅助功能。
+    /// Opens System Settings › Privacy & Security › Accessibility directly.
     public static func openSystemSettings() {
         let url = URL(string:
             "x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!

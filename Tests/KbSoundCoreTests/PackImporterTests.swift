@@ -41,15 +41,15 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
         #expect(ref.name == "Multi Pack")
 
         let pack = try LoadedPack(ref: ref)
-        #expect(pack.buffer(for: 0, phase: .down) != nil)    // A，走行变体
-        #expect(pack.buffer(for: 49, phase: .down) != nil)   // 空格，走专属音
-        #expect(pack.buffer(for: 0, phase: .up) != nil)      // 抬键音
+        #expect(pack.buffer(for: 0, phase: .down) != nil)    // A, via the row variant
+        #expect(pack.buffer(for: 49, phase: .down) != nil)   // space, via its own sound
+        #expect(pack.buffer(for: 0, phase: .up) != nil)      // key-up sound
     }
 }
 
 @Test func mapsRowVariantsByPhysicalRow() throws {
     try withTempDirs { source, destination in
-        // 每行给不同幅度，用来确认 A 拿到的是第 2 行的音
+        // A different amplitude per row confirms that A gets the row-2 sound
         for row in 0...4 {
             try makeTone(at: source.appending(path: "GENERIC_R\(row).wav"),
                          level: Float(row + 1) / 10)
@@ -60,15 +60,15 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
         """.utf8).write(to: source.appending(path: "config.json"))
 
         let pack = try LoadedPack(ref: try PackImporter.importPack(from: source, into: destination))
-        let a = try #require(pack.buffer(for: 0, phase: .down))    // A 在第 2 行 → 0.3
-        let q = try #require(pack.buffer(for: 12, phase: .down))   // Q 在第 1 行 → 0.2
-        // 除掉整包的响度归一增益，还原成录制电平再比对
+        let a = try #require(pack.buffer(for: 0, phase: .down))    // A is in row 2 → 0.3
+        let q = try #require(pack.buffer(for: 12, phase: .down))   // Q is in row 1 → 0.2
+        // Divide out the pack's normalization gain to compare recorded levels
         #expect(abs(a.floatChannelData![0][100] / pack.gain - 0.3) < 0.01)
         #expect(abs(q.floatChannelData![0][100] / pack.gain - 0.2) < 0.01)
     }
 }
 
-// MARK: - Mechvibes single（精灵）
+// MARK: - Mechvibes single (sprite)
 
 @Test func importsSpritePackBySlicingTheSharedFile() throws {
     try withTempDirs { source, destination in
@@ -81,11 +81,11 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
         let pack = try LoadedPack(ref: try PackImporter.importPack(from: source, into: destination))
         let a = try #require(pack.buffer(for: 0, phase: .down))     // X11 30 = A
         #expect(abs(Double(a.frameLength) / a.format.sampleRate - 0.1) < 0.01)
-        #expect(pack.buffer(for: 49, phase: .down) != nil)          // X11 57 = 空格
+        #expect(pack.buffer(for: 49, phase: .down) != nil)          // X11 57 = space
     }
 }
 
-// MARK: - KbSound 原生
+// MARK: - KbSound native
 
 @Test func copiesNativePackAsIs() throws {
     try withTempDirs { source, destination in
@@ -100,7 +100,7 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
     }
 }
 
-// MARK: - 错误处理
+// MARK: - Error handling
 
 @Test func rejectsFolderWithNeitherManifestNorConfig() throws {
     try withTempDirs { source, destination in
@@ -133,7 +133,7 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
 
         _ = try PackImporter.importPack(from: source, into: destination)
         let second = try PackImporter.importPack(from: source, into: destination)
-        // 不该堆出 dup-1、dup-2 之类的重复目录
+        // No dup-1 / dup-2 directories should pile up
         let entries = try FileManager.default.contentsOfDirectory(atPath: destination.path)
         #expect(entries.count == 1)
         #expect(second.id == "dup")
@@ -147,15 +147,17 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
          "sound":"GENERIC_R{0-4}.wav","defines":{}}
         """.utf8).write(to: source.appending(path: "config.json"))
         _ = try? PackImporter.importPack(from: source, into: destination)
-        // 失败后不能在用户目录里留下半成品，否则下次扫描会看到一个坏包
+        // A failure must not leave a half-written pack behind, or the next scan would pick up
+        // a broken pack
         let entries = (try? FileManager.default.contentsOfDirectory(atPath: destination.path)) ?? []
         #expect(entries.isEmpty)
     }
 }
 
 @Test func importsMultiPackThatMapsEveryKeyDirectly() throws {
-    // 真实社区包（如 mechvibes-lofi-sounds）常见：sound 字段是不存在的占位，
-    // 118 个键全在 defines 里逐个指定文件，完全不用行模式
+    // Common in real community packs (mechvibes-lofi-sounds and friends): the sound field
+    // is a placeholder that does not exist and all 118 keys name their file individually
+    // in defines, with no row pattern at all
     try withTempDirs { source, destination in
         try makeTone(at: source.appending(path: "keyboard1.wav"), level: 0.2)
         try makeTone(at: source.appending(path: "keyboard4.wav"), level: 0.8)
@@ -181,7 +183,7 @@ private func withTempDirs(_ body: (_ source: URL, _ destination: URL) throws -> 
         """.utf8).write(to: source.appending(path: "config.json"))
 
         let pack = try LoadedPack(ref: try PackImporter.importPack(from: source, into: destination))
-        // 没在 defines 里的键也该有声音，而不是静默
+        // Keys absent from defines should still make a sound rather than staying silent
         #expect(pack.buffer(for: 12, phase: .down) != nil)
     }
 }

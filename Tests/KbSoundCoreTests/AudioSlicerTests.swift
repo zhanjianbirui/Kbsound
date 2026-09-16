@@ -3,7 +3,8 @@ import Foundation
 import Testing
 @testable import KbSoundCore
 
-/// 造一个 1 秒的测试音频，每 100ms 一段不同幅度，便于验证切出来的是哪一段。
+/// Builds one second of test audio in 100 ms segments of differing amplitude, so it is
+/// easy to tell which segment a slice came from.
 private func makeSpriteFile(at url: URL) throws {
     let format = AVAudioFormat(standardFormatWithSampleRate: 48000, channels: 1)!
     let file = try AVAudioFile(forWriting: url, settings: format.settings)
@@ -35,7 +36,7 @@ private func withTempDir(_ body: (URL) throws -> Void) throws {
         let buffer = AVAudioPCMBuffer(pcmFormat: result.processingFormat,
                                       frameCapacity: AVAudioFrameCount(result.length))!
         try result.read(into: buffer)
-        // 200ms 处属于第 3 段（索引 2），幅度应为 0.3
+        // 200 ms lands in the third segment (index 2), amplitude 0.3
         #expect(abs(buffer.floatChannelData![0][10] - 0.3) < 0.01)
     }
 }
@@ -45,7 +46,7 @@ private func withTempDir(_ body: (URL) throws -> Void) throws {
         let sprite = dir.appending(path: "sprite.wav")
         try makeSpriteFile(at: sprite)
         let out = dir.appending(path: "tail.wav")
-        // 素材只有 1000ms，请求 900ms 起、时长 500ms
+        // The source is only 1000 ms long; ask for 500 ms starting at 900 ms
         try AudioSlicer.writeSlice(of: sprite, offsetMs: 900, durationMs: 500, to: out)
         let result = try AVAudioFile(forReading: out)
         #expect(abs(Double(result.length) / result.processingFormat.sampleRate - 0.1) < 0.005)

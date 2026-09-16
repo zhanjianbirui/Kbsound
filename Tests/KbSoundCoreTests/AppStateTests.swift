@@ -6,7 +6,8 @@ import Testing
 private let repoRoot = URL(filePath: #filePath)
     .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
 
-/// 用内存存储，测试之间互不干扰，也不在偏好目录留 plist。
+/// An in-memory store keeps tests independent and leaves no plist in the preferences
+/// directory.
 private func isolatedSettings() -> Settings {
     Settings(defaults: InMemoryStore())
 }
@@ -52,7 +53,8 @@ private func makeState(settings: Settings = isolatedSettings()) -> AppState {
     let settings = isolatedSettings()
     settings.packID = "com.example.deleted-pack"
     let state = makeState(settings: settings)
-    // 存的包不存在时应回退到第一个可用包，而不是留一个无效 id
+    // When the stored pack is gone, fall back to the first available one rather than
+    // keeping an invalid id
     #expect(state.packs.map(\.id).contains(state.selectedPackID))
 }
 
@@ -70,9 +72,9 @@ private func makeState(settings: Settings = isolatedSettings()) -> AppState {
     #expect(state.packs.isEmpty)
 }
 
-// MARK: - 导入音效包
+// MARK: - Importing sound packs
 
-/// 造一个最小可用的 Mechvibes multi 包。
+/// Builds a minimal usable Mechvibes multi pack.
 private func makeImportableSource() throws -> URL {
     let dir = URL.temporaryDirectory.appending(path: "src-\(UUID().uuidString)")
     try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)

@@ -1,0 +1,28 @@
+/* Menu bar */
+"KbSound keyboard sounds" = "KbSound keyboard sounds";
+
+/* Status banner */
+"Accessibility permission required" = "Accessibility permission required";
+"Opens System Settings so you can grant Accessibility permission" = "Opens System Settings so you can grant Accessibility permission";
+"Could not start the key listener." = "Could not start the key listener.";
+"No sound pack available." = "No sound pack available.";
+"Could not load sound pack: %@" = "Could not load sound pack: %@";
+
+/* Controls */
+"Keyboard sounds" = "Keyboard sounds";
+"Keyboard sounds off" = "Keyboard sounds off";
+"Volume" = "Volume";
+"Sound packs" = "Sound packs";
+"Launch at login" = "Launch at login";
+"Quit KbSound" = "Quit KbSound";
+
+/* Import */
+"Import sound pack…" = "Import sound pack…";
+"Pick a sound pack folder; Mechvibes packs are supported" = "Pick a sound pack folder; Mechvibes packs are supported";
+"Import" = "Import";
+"Choose the folder that holds the sound pack (Mechvibes and KbSound formats)" = "Choose the folder that holds the sound pack (Mechvibes and KbSound formats)";
+"This folder has no manifest.json or config.json, so its format cannot be recognized." = "This folder has no manifest.json or config.json, so its format cannot be recognized.";
+"The sound pack is missing an audio file: %@" = "The sound pack is missing an audio file: %@";
+"This sound pack does not define any key sounds." = "This sound pack does not define any key sounds.";
+"Unsupported sound path pattern: %@" = "Unsupported sound path pattern: %@";
+"Import failed: %@" = "Import failed: %@";

@@ -3,7 +3,7 @@ import Foundation
 import Testing
 @testable import KbSoundCore
 
-/// 仓库根目录：本文件在 <root>/Tests/KbSoundCoreTests/ 下。
+/// Repository root: this file lives in <root>/Tests/KbSoundCoreTests/.
 private let repoRoot = URL(filePath: #filePath)
     .deletingLastPathComponent()   // KbSoundCoreTests
     .deletingLastPathComponent()   // Tests
@@ -25,7 +25,7 @@ private func realPack(_ dirName: String) throws -> PackRef {
 }
 
 @Test func decodesMonoPack() throws {
-    // topre-silent 是 48000Hz 单声道，用来确认我们没写死格式
+    // topre-silent is 48000 Hz mono, which confirms the format is not hardcoded
     let pack = try LoadedPack(ref: realPack("topre-silent"))
     #expect(pack.format.sampleRate == 48000)
     #expect(pack.format.channelCount == 1)
@@ -33,7 +33,7 @@ private func realPack(_ dirName: String) throws -> PackRef {
 
 @Test func returnsBufferForMappedKey() throws {
     let pack = try LoadedPack(ref: realPack("mx-brown-pbt"))
-    // keyCode 49 = 空格，manifest 里映射到 spacebar.wav
+    // keyCode 49 = space, mapped to spacebar.wav in the manifest
     let buffer = try #require(pack.buffer(for: 49, phase: .down))
     #expect(buffer.frameLength > 0)
 }
@@ -44,23 +44,23 @@ private func realPack(_ dirName: String) throws -> PackRef {
 }
 
 @Test func returnsNilForUpWhenPackHasNoUpSounds() throws {
-    // mx-brown-pbt 只定义了 down
+    // mx-brown-pbt only defines down
     let pack = try LoadedPack(ref: realPack("mx-brown-pbt"))
     #expect(pack.buffer(for: 49, phase: .up) == nil)
 }
 
 @Test func returnsBufferForUpWhenPackDefinesIt() throws {
-    // topre-silent 同时定义了 down 和 up
+    // topre-silent defines both down and up
     let pack = try LoadedPack(ref: realPack("topre-silent"))
     #expect(pack.buffer(for: 49, phase: .up) != nil)
 }
 
 @Test func sameFileIsDecodedOnlyOnce() throws {
-    // manifest 里几十个 keyCode 指向同一个 wav，不该解码几十份
+    // Dozens of key codes point at the same wav; it must not be decoded dozens of times
     let pack = try LoadedPack(ref: realPack("mx-brown-pbt"))
     let a = try #require(pack.buffer(for: 0, phase: .down))
     let b = try #require(pack.buffer(for: 1, phase: .down))
-    #expect(a === b)  // 两个 keyCode 都映射到同一个 wav，应是同一个 buffer 实例
+    #expect(a === b)  // Both key codes map to the same wav, so it must be the same buffer instance
 }
 
 @Test func everyBundledPackDecodes() throws {
@@ -68,12 +68,13 @@ private func realPack(_ dirName: String) throws -> PackRef {
     let dirs = try FileManager.default.contentsOfDirectory(atPath: packsDir.path).sorted()
     #expect(dirs.count == 21)
     for dir in dirs {
-        _ = try LoadedPack(ref: realPack(dir))  // 任何一套解码失败都会让测试失败
+        _ = try LoadedPack(ref: realPack(dir))  // A decode failure in any pack fails the test
     }
 }
 
 @Test func trimsLeadInSoSoundsStartPromptly() throws {
-    // mx-brown-pbt 原始录音要 23.7ms 才达到半峰；加载后应当立刻起振
+    // The raw mx-brown-pbt recording takes 23.7 ms to reach half peak; after loading the
+    // onset must be immediate
     let pack = try LoadedPack(ref: realPack("mx-brown-pbt"))
     let buffer = try #require(pack.buffer(for: 0, phase: .down))
     var peak: Float = 0

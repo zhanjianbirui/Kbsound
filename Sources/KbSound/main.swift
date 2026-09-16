@@ -1,8 +1,9 @@
 import AppKit
 import KbSoundCore
 
-/// 内置音效包目录。打包成 .app 后在 bundle 资源里；
-/// `swift run` 开发时 bundle 里没有，回退到仓库的 Resources/Packs。
+/// Directory of the built-in sound packs. In a packaged `.app` they live in the
+/// bundle's resources; under `swift run` there is no bundle copy, so fall back to the
+/// repository's Resources/Packs.
 private func builtInPacksURL() -> URL {
     if let resources = Bundle.main.resourceURL {
         let bundled = resources.appending(path: "Packs")
@@ -21,7 +22,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var menuBar: MenuBarController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // 搜索路径优先级从低到高：用户包覆盖同 id 的内置包
+        // Search paths, lowest priority first: a user pack shadows a built-in one
+        // with the same id.
         let state = AppState(searchPaths: [builtInPacksURL(), userPacksURL()],
                              userPacksDirectory: userPacksURL())
         let menuBar = MenuBarController(state: state)
@@ -40,6 +42,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 let delegate = AppDelegate()
 let app = NSApplication.shared
 app.delegate = delegate
-// .accessory：不进 Dock、不占 App 切换器，只留菜单栏图标
+// .accessory: no Dock tile, no place in the app switcher — just the menu bar icon.
 app.setActivationPolicy(.accessory)
 app.run()

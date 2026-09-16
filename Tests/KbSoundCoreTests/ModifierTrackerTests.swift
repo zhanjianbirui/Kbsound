@@ -3,7 +3,7 @@ import Testing
 
 @Test func firstEventForAKeyIsDown() {
     var tracker = ModifierTracker()
-    #expect(tracker.phase(forKeyCode: 56) == .down)   // 56 = 左 Shift
+    #expect(tracker.phase(forKeyCode: 56) == .down)   // 56 = left Shift
 }
 
 @Test func secondEventForSameKeyIsUp() {
@@ -22,14 +22,15 @@ import Testing
 
 @Test func differentModifiersTrackedIndependently() {
     var tracker = ModifierTracker()
-    #expect(tracker.phase(forKeyCode: 56) == .down)   // 按下 Shift
-    #expect(tracker.phase(forKeyCode: 55) == .down)   // 再按下 Command
-    #expect(tracker.phase(forKeyCode: 56) == .up)     // 松开 Shift，Command 不受影响
-    #expect(tracker.phase(forKeyCode: 55) == .up)     // 松开 Command
+    #expect(tracker.phase(forKeyCode: 56) == .down)   // press Shift
+    #expect(tracker.phase(forKeyCode: 55) == .down)   // then press Command
+    #expect(tracker.phase(forKeyCode: 56) == .up)     // release Shift; Command is unaffected
+    #expect(tracker.phase(forKeyCode: 55) == .up)     // release Command
 }
 
 @Test func resetClearsAllHeldKeys() {
-    // 失焦或 tap 重启后状态可能与现实不符，reset 让下一次事件重新从 down 开始
+    // After losing focus or restarting the tap the state may not match reality; reset makes
+    // the next event start from down again
     var tracker = ModifierTracker()
     _ = tracker.phase(forKeyCode: 56)
     tracker.reset()

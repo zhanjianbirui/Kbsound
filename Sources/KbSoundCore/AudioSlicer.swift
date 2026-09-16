@@ -1,11 +1,12 @@
 import AVFoundation
 import Foundation
 
-/// 从「音频精灵」里切出一段，写成独立的 wav 文件。
+/// Cuts one slice out of an audio sprite and writes it as a standalone wav file.
 ///
-/// Mechvibes 的 `single` 包把所有按键音拼在一个文件里，靠 `[起始毫秒, 时长毫秒]` 定位。
-/// 导入时就地切开，运行时格式与其他包保持一致（一个音一个文件），
-/// 切出来的片段也能照常享受 `AudioTrim` 的前导裁剪。
+/// Mechvibes `single` packs pack every key sound into one file, addressed by
+/// `[offset ms, duration ms]`. Slicing at import time keeps the runtime format
+/// identical to every other pack (one sound per file) and lets the slices benefit
+/// from `AudioTrim`'s lead-in trimming like everything else.
 public enum AudioSlicer {
     public enum SliceError: Error, Equatable {
         case offsetBeyondEnd
@@ -26,7 +27,8 @@ public enum AudioSlicer {
         let startFrame = AVAudioFramePosition(offsetMs / 1000 * format.sampleRate)
         guard startFrame < file.length else { throw SliceError.offsetBeyondEnd }
 
-        // 请求的时长可能超出素材末尾，截到实际可用长度
+        // The requested duration may run past the end of the source; clamp it to what
+        // is actually available.
         let requested = AVAudioFrameCount(durationMs / 1000 * format.sampleRate)
         let available = AVAudioFrameCount(file.length - startFrame)
         let frameCount = min(requested, available)

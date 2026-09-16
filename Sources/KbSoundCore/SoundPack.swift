@@ -1,6 +1,6 @@
 import Foundation
 
-/// 一个按键在某个阶段该播放哪个音频文件。
+/// Which audio file one key plays in each phase.
 public struct KeySound: Codable, Sendable, Equatable {
     public let down: String?
     public let up: String?
@@ -18,13 +18,14 @@ public struct KeySound: Codable, Sendable, Equatable {
     }
 }
 
-/// 音效包 manifest.json 的模型（klinkmac v1 格式）。
+/// Model of a sound pack's manifest.json (klinkmac v1 format).
 public struct PackManifest: Codable, Sendable, Equatable {
     public let formatVersion: Int
     public let id: String
     public let name: String
     public let author: String?
-    /// 对应 JSON 里的 `description`，改名避开 Swift 的 `description` 语义。
+    /// Maps to `description` in the JSON; renamed to stay clear of Swift's own
+    /// `description` semantics.
     public let detail: String?
     public let defaults: KeySound
     public let keys: [String: KeySound]?
@@ -35,7 +36,7 @@ public struct PackManifest: Codable, Sendable, Equatable {
         case defaults, keys
     }
 
-    /// 查找顺序：`keys[keyCode]` 的对应阶段 → `defaults` 的对应阶段 → nil。
+    /// Lookup order: the phase in `keys[keyCode]` → the phase in `defaults` → nil.
     public func fileName(for keyCode: Int, phase: KeyPhase) -> String? {
         if let specific = keys?[String(keyCode)]?.fileName(for: phase) {
             return specific
@@ -43,7 +44,7 @@ public struct PackManifest: Codable, Sendable, Equatable {
         return defaults.fileName(for: phase)
     }
 
-    /// manifest 引用到的全部音频文件名，用于校验文件是否齐全。
+    /// Every audio file name the manifest references, used to check the pack is complete.
     public var referencedFiles: Set<String> {
         var files = Set([defaults.down, defaults.up].compactMap { $0 })
         for sound in keys?.values ?? [:].values {

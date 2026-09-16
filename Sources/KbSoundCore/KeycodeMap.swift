@@ -1,35 +1,37 @@
 import Foundation
 
-/// Linux/X11 键码与 macOS 虚拟键码之间的对照表。
+/// Translation table between Linux/X11 key codes and macOS virtual key codes.
 ///
-/// Mechvibes 是 Electron 应用，用 Linux input-event-codes 的键码（`KEY_A` = 30）；
-/// macOS 用自己的一套虚拟键码（A = 0），两者毫无规律可循，只能逐个列。
-/// 数字键尤其容易写错——macOS 的 1…0 是 18,19,20,21,23,22,26,28,25,29，并非连号。
+/// Mechvibes is an Electron app and uses Linux input-event-codes (`KEY_A` = 30);
+/// macOS has its own virtual key codes (A = 0). There is no pattern relating the two,
+/// so the mapping has to be listed entry by entry.
+/// The number row is especially easy to get wrong — on macOS 1…0 are
+/// 18, 19, 20, 21, 23, 22, 26, 28, 25, 29, which is not a contiguous run.
 public enum KeycodeMap {
-    /// X11 键码 → macOS 虚拟键码。
+    /// X11 key code → macOS virtual key code.
     public static let x11ToMac: [Int: Int] = [
-        // 数字行
+        // Number row
         1: 53, 2: 18, 3: 19, 4: 20, 5: 21, 6: 23, 7: 22, 8: 26, 9: 28, 10: 25,
         11: 29, 12: 27, 13: 24, 14: 51,
-        // QWERTY 行
+        // QWERTY row
         15: 48, 16: 12, 17: 13, 18: 14, 19: 15, 20: 17, 21: 16, 22: 32, 23: 34,
         24: 31, 25: 35, 26: 33, 27: 30, 28: 36,
-        // ASDF 行
+        // ASDF row
         29: 59, 30: 0, 31: 1, 32: 2, 33: 3, 34: 5, 35: 4, 36: 38, 37: 40, 38: 37,
         39: 41, 40: 39, 41: 50,
-        // ZXCV 行
+        // ZXCV row
         42: 56, 43: 42, 44: 6, 45: 7, 46: 8, 47: 9, 48: 11, 49: 45, 50: 46,
         51: 43, 52: 47, 53: 44, 54: 60,
-        // 底排与功能键
+        // Bottom row and function keys
         56: 58, 57: 49, 58: 57,
         59: 122, 60: 120, 61: 99, 62: 118, 63: 96, 64: 97, 65: 98, 66: 100,
         67: 101, 68: 109, 87: 103, 88: 111,
         97: 62, 100: 61, 125: 55, 126: 54,
-        // 方向键
+        // Arrow keys
         103: 126, 105: 123, 106: 124, 108: 125,
     ]
 
-    /// macOS 虚拟键码 → 键盘第几行。行的含义与 Mechvibes 的 `GENERIC_R{0-4}` 一致。
+    /// macOS virtual key code → keyboard row. Rows match Mechvibes' `GENERIC_R{0-4}`.
     private static let rows: [Int: [Int]] = [
         0: [50, 18, 19, 20, 21, 23, 22, 26, 28, 25, 29, 27, 24, 51,
             53, 122, 120, 99, 118, 96, 97, 98, 100, 101, 109, 103, 111],
@@ -55,7 +57,7 @@ public enum KeycodeMap {
         rows[row] ?? []
     }
 
-    /// 所有已归行的 macOS 键码，用于给音效包铺满按键映射。
+    /// Every macOS key code assigned to a row, used to fill in a pack's key mapping.
     public static var allKeycodes: [Int] {
         rows.values.flatMap { $0 }
     }

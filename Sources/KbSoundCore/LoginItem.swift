@@ -2,8 +2,9 @@ import Foundation
 import ServiceManagement
 import os
 
-/// 开机自启。以 `SMAppService` 的状态为唯一数据源，不另存 UserDefaults——
-/// 用户可能在系统设置里直接关掉，存一份副本就会不同步。
+/// Launch at login. `SMAppService`'s status is the single source of truth — no copy in
+/// UserDefaults, because the user can switch it off in System Settings and a cached
+/// copy would immediately be out of sync.
 public enum LoginItem {
     private static let logger = Logger(subsystem: "com.kbsound", category: "LoginItem")
 
@@ -17,6 +18,6 @@ public enum LoginItem {
         } else {
             try SMAppService.mainApp.unregister()
         }
-        logger.info("开机自启设为 \(enabled, privacy: .public)")
+        logger.info("Launch at login set to \(enabled, privacy: .public)")
     }
 }

@@ -14,7 +14,7 @@ private func parse(_ json: String) throws -> MechvibesConfig {
     """)
     #expect(config.name == "Turquoise")
     guard case .multi(let defines) = config.layout else {
-        Issue.record("应解析为 multi"); return
+        Issue.record("expected a multi layout"); return
     }
     #expect(defines["14"] == "press/BACKSPACE.mp3")
     #expect(config.soundup == "release/GENERIC.mp3")
@@ -26,7 +26,7 @@ private func parse(_ json: String) throws -> MechvibesConfig {
      "defines":{"1":[0,120],"30":[500,140],"57":[1000,200]}}
     """)
     guard case .sprite(let slices) = config.layout else {
-        Issue.record("应解析为 sprite"); return
+        Issue.record("expected a sprite layout"); return
     }
     #expect(slices["30"]?.offsetMs == 500)
     #expect(slices["30"]?.durationMs == 140)
@@ -34,13 +34,14 @@ private func parse(_ json: String) throws -> MechvibesConfig {
 }
 
 @Test func spriteEntriesThatAreNullAreSkipped() throws {
-    // Mechvibes 的精灵包对未定义的键会写 null，不能让整份 config 解析失败
+    // Mechvibes sprite packs write null for undefined keys; that must not fail the whole
+    // config
     let config = try parse("""
     {"id":"z","name":"P","key_define_type":"single","sound":"s.ogg",
      "defines":{"1":[0,100],"2":null}}
     """)
     guard case .sprite(let slices) = config.layout else {
-        Issue.record("应解析为 sprite"); return
+        Issue.record("expected a sprite layout"); return
     }
     #expect(slices["1"] != nil)
     #expect(slices["2"] == nil)
@@ -66,13 +67,13 @@ private func parse(_ json: String) throws -> MechvibesConfig {
 }
 
 @Test func multiEntriesThatAreNullAreSkipped() throws {
-    // 真实社区包的 defines 里同样会出现 null（未定义的键）
+    // Real community packs also have nulls in defines (undefined keys)
     let config = try parse("""
     {"id":"n","name":"N","key_define_type":"multi","sound":"s.ogg",
      "defines":{"1":"a.mp3","3597":null}}
     """)
     guard case .multi(let defines) = config.layout else {
-        Issue.record("应解析为 multi"); return
+        Issue.record("expected a multi layout"); return
     }
     #expect(defines["1"] == "a.mp3")
     #expect(defines["3597"] == nil)

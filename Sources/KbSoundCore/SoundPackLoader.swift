@@ -1,7 +1,7 @@
 import Foundation
 import os
 
-/// 菜单里列出一个音效包所需的最少信息。
+/// The minimum a sound pack needs for the menu to list it.
 public struct PackRef: Sendable, Equatable, Identifiable {
     public let id: String
     public let name: String
@@ -16,11 +16,12 @@ public struct PackRef: Sendable, Equatable, Identifiable {
     }
 }
 
-/// 扫描若干目录，找出其中可用的音效包。
+/// Scans a list of directories for usable sound packs.
 public struct SoundPackLoader {
     private static let logger = Logger(subsystem: "com.kbsound", category: "PackLoader")
 
-    /// 优先级从低到高：靠后的目录里同 id 的包会覆盖靠前的。
+    /// Lowest priority first: a pack in a later directory shadows one with the same id
+    /// in an earlier directory.
     private let searchPaths: [URL]
 
     public init(searchPaths: [URL]) {
@@ -43,8 +44,8 @@ public struct SoundPackLoader {
             entries = try FileManager.default.contentsOfDirectory(
                 at: path, includingPropertiesForKeys: [.isDirectoryKey])
         } catch {
-            // 目录不存在是正常情况（用户从未创建过自定义包目录）。
-            Self.logger.debug("跳过不可读的搜索路径 \(path.path, privacy: .public)")
+            // A missing directory is normal — the user may never have imported a pack.
+            Self.logger.debug("Skipping unreadable search path \(path.path, privacy: .public)")
             return []
         }
         return entries.compactMap(packRef(at:))
@@ -58,13 +59,13 @@ public struct SoundPackLoader {
         do {
             manifest = try JSONDecoder().decode(PackManifest.self, from: Data(contentsOf: manifestURL))
         } catch {
-            Self.logger.error("跳过 \(directory.lastPathComponent, privacy: .public)：manifest 解析失败 \(error.localizedDescription, privacy: .public)")
+            Self.logger.error("Skipping \(directory.lastPathComponent, privacy: .public): could not parse the manifest, \(error.localizedDescription, privacy: .public)")
             return nil
         }
 
         for file in manifest.referencedFiles
         where !FileManager.default.fileExists(atPath: directory.appending(path: file).path) {
-            Self.logger.error("跳过 \(manifest.id, privacy: .public)：缺少音频文件 \(file, privacy: .public)")
+            Self.logger.error("Skipping \(manifest.id, privacy: .public): missing audio file \(file, privacy: .public)")
             return nil
         }
 
