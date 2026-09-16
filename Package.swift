@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "KbSound",
     defaultLocalization: "en",
-    platforms: [.macOS(.v26)],
+    platforms: [.macOS(.v14)],
     targets: [
         .target(name: "KbSoundCore", resources: [.process("Resources")]),
         .executableTarget(name: "KbSound", dependencies: ["KbSoundCore"]),

@@ -46,7 +46,7 @@ cat > "${APP}/Contents/Info.plist" <<PLIST
         <string>en</string>
         <string>zh-Hans</string>
     </array>
-    <key>LSMinimumSystemVersion</key>    <string>26.0</string>
+    <key>LSMinimumSystemVersion</key>    <string>14.0</string>
     <key>LSUIElement</key>               <true/>
 </dict>
 </plist>

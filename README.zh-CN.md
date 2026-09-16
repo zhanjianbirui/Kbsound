@@ -6,7 +6,7 @@
 
 **macOS 菜单栏里的机械键盘音效。**
 
-![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black)
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-black)
 ![Swift 6](https://img.shields.io/badge/Swift-6-orange)
 ![Tests](https://img.shields.io/badge/tests-113%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -27,6 +27,10 @@
 | 📦 | **可导入 Mechvibes 音效包** —— 丢进任意社区包文件夹即可，无需转码 |
 | 🌏 | **中英双语界面**，跟随系统语言 |
 | 🔒 | **不联网、无遥测** —— 约 7MB 音频，CPU 占用可忽略 |
+
+> **系统支持说明。** 开发和测试是在 macOS 26（Apple Silicon）上做的。代码的目标版本是
+> macOS 14，对着 14 编译无错无警告，但**没有在 14–25 的真机上验证过**。
+> 如果你在旧系统上跑了，开个 issue 说一声成没成，会很有帮助。
 
 ## 安装
 
@@ -84,6 +88,26 @@ xattr -dr com.apple.quarantine /Applications/KbSound.app
 | **音效包** | 内置 21 套，点击即切换 |
 | **导入音效包…** | 导入外部音效包，见下 |
 | **开机自启** | 以系统的登录项状态为准 |
+
+## 与 Mechvibes 的区别
+
+[Mechvibes](https://github.com/hainguyents13/mechvibes) 是把打字音效带火的那个项目，
+也是绝大多数社区音效包的来源 —— KbSound 能直接导入它的包，并且附带了其中 6 套（已注明出处）。
+两者的差别在架构，不是谁分高：
+
+| | KbSound | Mechvibes |
+|---|---|---|
+| 实现 | 原生 Swift + AppKit/SwiftUI | Electron |
+| 平台 | 仅 macOS | macOS、Windows、Linux |
+| 体积 | 8.6MB（其中 6.8MB 是音频，二进制仅 644KB） | 含 Electron 运行时 |
+| 音效包 | 内置 21 套，可导入 Mechvibes 包 | 社区库更大 |
+| 响度 | 加载时按包归一 | 保持原始录制电平 |
+| 联网 | 无 —— 源码无网络调用，未链接 CFNetwork | — |
+
+如果你要在 Windows 或 Linux 上用，或者想要最大的音效包库，那就用 Mechvibes。
+KbSound 适合想要一个小巧的原生 macOS app、且受不了切包时音量忽大忽小的人。
+
+*（以上是结构性事实，不是跑分。我没有做过两者的延迟或内存对照测试，所以不做这类声称。）*
 
 ## 响度归一
 

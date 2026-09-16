@@ -6,7 +6,7 @@
 
 **Mechanical keyboard sounds for macOS, right from the menu bar.**
 
-![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black)
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-black)
 ![Swift 6](https://img.shields.io/badge/Swift-6-orange)
 ![Tests](https://img.shields.io/badge/tests-113%20passing-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-blue)
@@ -27,6 +27,11 @@
 | 📦 | **Imports Mechvibes packs** — drop in any community pack folder, no transcoding |
 | 🌏 | **English and 简体中文**, following your system language |
 | 🔒 | **No network access, no telemetry** — ~7 MB of audio, negligible CPU |
+
+> **Supported systems.** Developed and tested on macOS 26 (Apple Silicon). The code
+> targets macOS 14 and builds cleanly against it, but it has not been verified on a real
+> machine running 14–25. If you run it on an older system, an issue saying whether it
+> worked would be genuinely useful.
 
 ## Install
 
@@ -88,6 +93,29 @@ Click the keyboard icon in the menu bar:
 | **Sound packs** | 21 built in; click one to switch. |
 | **Import sound pack…** | Imports an external pack; see below. |
 | **Launch at login** | Follows the system's login item state. |
+
+## Compared to Mechvibes
+
+[Mechvibes](https://github.com/hainguyents13/mechvibes) is the project that made typing
+sounds popular on the desktop, and it is where most community packs come from — KbSound
+imports its packs directly and ships six of them with credit. The difference is
+architectural, not a scoreboard:
+
+| | KbSound | Mechvibes |
+|---|---|---|
+| Built as | Native Swift + AppKit/SwiftUI | Electron |
+| Platforms | macOS only | macOS, Windows, Linux |
+| App size | 8.6 MB (6.8 MB of it audio; the binary is 644 KB) | Electron runtime included |
+| Pack ecosystem | 21 built in, imports Mechvibes packs | The larger community library |
+| Loudness | Normalized per pack on load | As recorded |
+| Network access | None — no networking code, CFNetwork not linked | — |
+
+If you want typing sounds on Windows or Linux, or you want the widest possible pack
+library, use Mechvibes. KbSound is for people who want a small native macOS app and don't
+want packs jumping in volume when they switch.
+
+*(These are structural facts, not benchmarks. No side-by-side latency or memory
+measurements were taken, so none are claimed.)*
 
 ## Loudness normalization
 
