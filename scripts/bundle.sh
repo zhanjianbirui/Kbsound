@@ -25,6 +25,8 @@ cp -R "Resources/Packs" "${APP}/Contents/Resources/Packs"
 # The localized UI strings live in the KbSoundCore resource bundle; without it the app
 # falls back to the raw keys.
 cp -R ".build/release/${APP_NAME}_KbSoundCore.bundle" "${APP}/Contents/Resources/"
+# Rendered by scripts/make-icon.swift; re-run that after changing the artwork.
+cp "Resources/AppIcon.icns" "${APP}/Contents/Resources/AppIcon.icns"
 
 cat > "${APP}/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -35,6 +37,7 @@ cat > "${APP}/Contents/Info.plist" <<PLIST
     <key>CFBundleExecutable</key>        <string>${APP_NAME}</string>
     <key>CFBundleIdentifier</key>        <string>${BUNDLE_ID}</string>
     <key>CFBundlePackageType</key>       <string>APPL</string>
+    <key>CFBundleIconFile</key>          <string>AppIcon</string>
     <key>CFBundleShortVersionString</key><string>1.0</string>
     <key>CFBundleVersion</key>           <string>1</string>
     <key>CFBundleDevelopmentRegion</key> <string>en</string>

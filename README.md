@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/icon.png" width="128" alt="KbSound icon">
+
 # KbSound
 
 **Mechanical keyboard sounds for macOS, right from the menu bar.**
@@ -190,6 +192,10 @@ UI strings live in `Sources/KbSoundCore/Resources/<locale>.lproj/Localizable.str
 and are resolved through the `loc(_:)` helper in `Localization.swift`. To add a language,
 add an `.lproj` directory and list the locale in `CFBundleLocalizations` in
 `scripts/bundle.sh`.
+
+The app icon is drawn in code rather than stored as a binary blob — edit
+`scripts/make-icon.swift` and run `swift scripts/make-icon.swift` to re-render
+`Resources/AppIcon.icns`.
 
 ## License
 

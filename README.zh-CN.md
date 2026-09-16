@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/icon.png" width="128" alt="KbSound icon">
+
 # KbSound
 
 **macOS 菜单栏里的机械键盘音效。**
@@ -174,6 +176,9 @@ swift run KbSound              # 开发期运行（在仓库根目录；不支�
 界面文案放在 `Sources/KbSoundCore/Resources/<locale>.lproj/Localizable.strings`，
 统一经 `Localization.swift` 里的 `loc(_:)` 取用。新增语言：加一个 `.lproj` 目录，
 并把该 locale 写进 `scripts/bundle.sh` 的 `CFBundleLocalizations`。
+
+app 图标是用代码画的，不是一个二进制黑盒——改 `scripts/make-icon.swift`，
+跑 `swift scripts/make-icon.swift` 即可重新生成 `Resources/AppIcon.icns`。
 
 ## 授权
 
