@@ -1,51 +1,75 @@
+<div align="center">
+
 # KbSound
 
-一个 macOS 菜单栏小工具：敲键盘时播放机械键盘音效。
-
-[English](README.md) · **简体中文**
+**macOS 菜单栏里的机械键盘音效。**
 
 ![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black)
 ![Swift 6](https://img.shields.io/badge/Swift-6-orange)
 ![Tests](https://img.shields.io/badge/tests-113%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-- **内置 21 套音效包**，在菜单栏里随点随切
-- **响度归一** —— 每套包听感音量一致，切包不会忽大忽小
-- **低延迟** —— 裁掉音频前导段 + 调小 IO buffer，按键到出声很紧
-- **可导入 Mechvibes 音效包** —— 丢进任意社区包文件夹即可
-- **界面中英双语**，跟随系统语言
-- 不联网、无遥测，约 7MB 音频，CPU 占用可忽略
+### [⬇︎ 下载最新版 DMG](https://github.com/zhanjianbirui/Kbsound/releases/latest)
+
+[English](README.md)
+
+</div>
 
 ---
 
+| | |
+|---|---|
+| 🎹 | **内置 21 套音效包** —— Cherry MX、Topre、NovelKeys Cream、Holy Pandas 等，菜单栏随点随切 |
+| 🔊 | **响度归一** —— 每套包听感音量一致，切包不会忽大忽小 |
+| ⚡️ | **低延迟** —— 裁掉音频前导段 + 调小 IO buffer，按键到出声很紧 |
+| 📦 | **可导入 Mechvibes 音效包** —— 丢进任意社区包文件夹即可，无需转码 |
+| 🌏 | **中英双语界面**，跟随系统语言 |
+| 🔒 | **不联网、无遥测** —— 约 7MB 音频，CPU 占用可忽略 |
+
 ## 安装
 
-推荐先打成 DMG（要装到多台机器时尤其方便）：
+**1 · 下载并拖入。** 打开[最新版 DMG](https://github.com/zhanjianbirui/Kbsound/releases/latest)，
+把 **KbSound** 拖到「应用程序」文件夹上。
+
+**2 · 去掉隔离标记。** 本 app 使用 ad-hoc 签名，没有 Apple 开发者证书，
+所以从网上下载的版本会被 macOS 拦下。执行一次：
 
 ```sh
-./scripts/dmg.sh
-open build/
+xattr -dr com.apple.quarantine /Applications/KbSound.app
 ```
 
-挂载后把 **KbSound** 拖进「应用程序」。也可以只打 `.app`：
+<details>
+<summary>不想用终端？</summary>
+
+双击 KbSound，让系统拒绝一次，然后打开**系统设置 › 隐私与安全性**，
+滑到最下面点**仍要打开**。部分 macOS 版本对未签名的 app 不提供这条路径，
+那就只能用上面的 `xattr` 命令。
+</details>
+
+**3 · 授予辅助功能权限。** 启动 KbSound。Dock 里不会有图标——看菜单栏右侧，
+会出现一个「喇叭划线」图标。点它，再点黄色提示条，到
+**系统设置 › 隐私与安全性 › 辅助功能** 中勾选 KbSound。无需重启：约 2 秒后
+图标会变成键盘，敲键盘就有声音了。
+
+> 辅助功能权限就是用来读按键事件的——app 靠它才知道你按了键。
+> 不存储、不上传任何内容；[`KeyEventTap.swift`](Sources/KbSoundCore/KeyEventTap.swift)
+> 一共 100 行，键码拿到手就直接进字典查表。
+
+<details>
+<summary>也可以自己从源码编译</summary>
 
 ```sh
-./scripts/bundle.sh
-cp -R build/KbSound.app /Applications/
-open /Applications/KbSound.app
+./scripts/dmg.sh      # 生成 build/KbSound-1.0.dmg
+# 或者只打 .app：
+./scripts/bundle.sh && cp -R build/KbSound.app /Applications/
 ```
 
-> **Gatekeeper。** 本 app 使用 ad-hoc 签名，没有开发者证书。
-> 在**别的机器**上首次打开会被拦下：右键点 KbSound 选「打开」，
-> 或执行 `xattr -dr com.apple.quarantine /Applications/KbSound.app`。
->
-> ad-hoc 签名按代码哈希标识二进制，所以**每次重新打包都会让已有的辅助功能授权失效**。
-> 需要在系统设置里删掉旧条目、勾上新的。
+本机编译出来的 app 不需要 `xattr` 那一步。但 ad-hoc 签名按代码哈希标识二进制，
+所以**每次重新打包都会让已有的辅助功能授权失效**——需要在系统设置里删掉旧条目、勾上新的。
 
-首次运行需要在 **系统设置 › 隐私与安全性 › 辅助功能** 中勾选 KbSound。
-无需重启——app 每 2 秒查一次，授权一落地就开始工作。
-
-> 必须以打包好的 `.app` 运行。辅助功能权限按 bundle identifier 授予，
-> 用 `swift run` 跑的话授权对象是终端，且开机自启不可用。
+必须以打包好的 `.app` 运行：辅助功能权限按 bundle identifier 授予，
+用 `swift run` 跑的话授权对象是终端，且开机自启不可用。
+</details>
 
 ## 使用
 

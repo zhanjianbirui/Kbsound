@@ -1,54 +1,79 @@
+<div align="center">
+
 # KbSound
 
-A tiny macOS menu bar app that plays mechanical keyboard sounds as you type.
-
-**English** · [简体中文](README.zh-CN.md)
+**Mechanical keyboard sounds for macOS, right from the menu bar.**
 
 ![macOS 26+](https://img.shields.io/badge/macOS-26%2B-black)
 ![Swift 6](https://img.shields.io/badge/Swift-6-orange)
 ![Tests](https://img.shields.io/badge/tests-113%20passing-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-- **21 built-in sound packs**, switchable from the menu bar
-- **Loudness-normalized** — every pack lands at the same perceived volume
-- **Low latency** — lead-in trimming and a small IO buffer keep key-to-sound tight
-- **Imports Mechvibes packs** — drop in any community pack folder
-- **English and Simplified Chinese UI**, following the system language
-- No network access, no telemetry, ~7 MB of audio, negligible CPU
+### [⬇︎ Download the latest DMG](https://github.com/zhanjianbirui/Kbsound/releases/latest)
+
+[简体中文](README.zh-CN.md)
+
+</div>
 
 ---
 
+| | |
+|---|---|
+| 🎹 | **21 built-in sound packs** — Cherry MX, Topre, NovelKeys Cream, Holy Pandas and more, switchable from the menu bar |
+| 🔊 | **Loudness-normalized** — every pack lands at the same perceived volume, so switching never jumps |
+| ⚡️ | **Low latency** — lead-in trimming and a small IO buffer keep key-to-sound tight |
+| 📦 | **Imports Mechvibes packs** — drop in any community pack folder, no transcoding |
+| 🌏 | **English and 简体中文**, following your system language |
+| 🔒 | **No network access, no telemetry** — ~7 MB of audio, negligible CPU |
+
 ## Install
 
-Build a DMG (recommended if you install on more than one machine):
+**1 · Download and drag in.** Open the [latest DMG](https://github.com/zhanjianbirui/Kbsound/releases/latest)
+and drag **KbSound** onto the Applications folder.
+
+**2 · Clear the quarantine flag.** The app is ad-hoc signed — there is no Apple developer
+certificate — so macOS blocks anything downloaded from the internet. Run this once:
 
 ```sh
-./scripts/dmg.sh
-open build/
+xattr -dr com.apple.quarantine /Applications/KbSound.app
 ```
 
-Mount it and drag **KbSound** into Applications. Or build just the `.app`:
+<details>
+<summary>Rather not use Terminal?</summary>
+
+Double-click KbSound, let macOS refuse it, then open **System Settings › Privacy &
+Security**, scroll to the bottom and click **Open Anyway**. On some macOS versions this
+path is unavailable for unsigned apps, in which case the `xattr` command above is the
+only way.
+</details>
+
+**3 · Grant Accessibility permission.** Launch KbSound. There is no Dock icon — look at
+the right side of the menu bar, where a crossed-out speaker appears. Click it, then the
+yellow banner, and tick KbSound in **System Settings › Privacy & Security ›
+Accessibility**. No restart needed: the icon turns into a keyboard within about two
+seconds and typing starts making sound.
+
+> Reading your keystrokes is what Accessibility permission is for — it is how the app
+> knows a key was pressed. Nothing is stored or sent anywhere; [`KeyEventTap.swift`](Sources/KbSoundCore/KeyEventTap.swift)
+> is 100 lines and the key code goes straight into a dictionary lookup.
+
+<details>
+<summary>Build from source instead</summary>
 
 ```sh
-./scripts/bundle.sh
-cp -R build/KbSound.app /Applications/
-open /Applications/KbSound.app
+./scripts/dmg.sh      # builds build/KbSound-1.0.dmg
+# or just the .app:
+./scripts/bundle.sh && cp -R build/KbSound.app /Applications/
 ```
 
-> **Gatekeeper.** The app is ad-hoc signed — there is no developer certificate.
-> On *another* machine, the first launch is blocked: right-click KbSound and choose
-> **Open**, or run `xattr -dr com.apple.quarantine /Applications/KbSound.app`.
->
-> Ad-hoc signatures identify the binary by its code hash, so **every rebuild
-> invalidates the existing Accessibility grant.** Remove the stale entry in System
-> Settings and tick the new one.
+A locally built app needs no `xattr` step. But ad-hoc signatures identify the binary by
+its code hash, so **every rebuild invalidates the existing Accessibility grant** — remove
+the stale entry in System Settings and tick the new one.
 
-On first run, enable KbSound in **System Settings › Privacy & Security › Accessibility**.
-No restart needed — the app polls every 2 seconds and starts working as soon as the
-grant lands.
-
-> It must run as a packaged `.app`. Accessibility permission is granted per bundle
-> identifier; under `swift run` the grant would go to your terminal, and Login Item
-> support is unavailable.
+It must run as a packaged `.app`: Accessibility permission is granted per bundle
+identifier, so under `swift run` the grant would go to your terminal, and Login Item
+support is unavailable.
+</details>
 
 ## Usage
 
