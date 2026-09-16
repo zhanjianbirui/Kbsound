@@ -33,6 +33,10 @@
 > machine running 14–25. If you run it on an older system, an issue saying whether it
 > worked would be genuinely useful.
 
+<div align="center">
+  <img src="docs/screenshot.png" width="260" alt="The KbSound menu bar panel">
+</div>
+
 ## Install
 
 **1 · Download and drag in.** Open the [latest DMG](https://github.com/zhanjianbirui/Kbsound/releases/latest)

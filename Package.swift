@@ -10,6 +10,8 @@ let package = Package(
         .executableTarget(name: "KbSound", dependencies: ["KbSoundCore"]),
         .executableTarget(name: "TapProbe"),
         .executableTarget(name: "LatencyProbe"),
+        // Dev tool: regenerates the README screenshot. Not part of the shipped app.
+        .executableTarget(name: "ScreenshotTool", dependencies: ["KbSoundCore"]),
         .testTarget(name: "KbSoundCoreTests", dependencies: ["KbSoundCore"]),
     ]
 )

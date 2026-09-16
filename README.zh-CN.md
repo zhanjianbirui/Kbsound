@@ -32,6 +32,10 @@
 > macOS 14，对着 14 编译无错无警告，但**没有在 14–25 的真机上验证过**。
 > 如果你在旧系统上跑了，开个 issue 说一声成没成，会很有帮助。
 
+<div align="center">
+  <img src="docs/screenshot-zh.png" width="298" alt="KbSound 菜单栏面板">
+</div>
+
 ## 安装
 
 **1 · 下载并拖入。** 打开[最新版 DMG](https://github.com/zhanjianbirui/Kbsound/releases/latest)，
